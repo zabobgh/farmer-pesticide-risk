@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>นบก.1-56 — แบบประเมินความเสี่ยงเกษตรกร</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#15805d;--g2:#0a5742;--g3:#e6f7f1;--g4:#8bd9c0;
+  --a:#b45309;--a2:#fef3c7;
+  --r:#b91c1c;--r2:#fee2e2;
+  --b:#1d4ed8;--b2:#dbeafe;
+  --bg:#f5f9f7;--card:#ffffff;
+  --txt:#0f241d;--muted:#426156;--border:#c2e5d9;
+  --shadow:0 2px 14px rgba(21,128,93,.09);
+  --radius:12px;--radius-sm:8px;
+}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;min-height:100vh}
+
+/* ── HEADER ── */
+.app-header{background:linear-gradient(135deg,#063e2c 0%,#15805d 100%);color:#fff;padding:1.1rem 1.25rem .9rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.22)}
+.hd-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hd-title{font-size:16px;font-weight:700;line-height:1.3}
+.hd-code{font-size:12px;opacity:.9;margin-top:2px;font-weight:400}
+.offline-badge{font-size:11px;font-weight:600;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:4px 10px;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.offline-dot{width:7px;height:7px;border-radius:50%;background:#34d399}
+
+/* progress */
+.prog-bar-wrap{margin-top:.75rem;display:flex;align-items:center;gap:12px}
+.prog-track{flex:1;height:6px;background:rgba(255,255,255,.3);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:#fff;border-radius:3px;transition:width .4s ease}
+.prog-txt{font-size:12px;font-weight:600;opacity:.95;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* ── STEP NAV ── */
+.step-nav{display:flex;background:#fff;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.step-nav::-webkit-scrollbar{display:none}
+.sn-btn{flex:1;min-width:68px;padding:12px 6px 10px;font-size:12px;font-family:'Sarabun',sans-serif;text-align:center;cursor:pointer;background:none;border:none;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s;line-height:1.3;white-space:nowrap;user-select:none}
+.sn-btn.active{color:var(--g2);border-bottom-color:var(--g);font-weight:700}
+.sn-btn.done{color:var(--g);border-bottom-color:var(--g4);font-weight:500}
+.sn-btn.locked{opacity:.6}
+.sn-num{font-size:17px;display:block;margin-bottom:2px}
+
+/* ── DRAFT BANNER ── */
+.draft-banner{background:var(--a2);border-bottom:1px solid #fcd34d;padding:10px 16px;font-size:13px;color:#78350f;font-weight:500;display:flex;align-items:center;justify-content:space-between;gap:8px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.draft-banner button{font-size:12px;font-weight:600;font-family:'Sarabun',sans-serif;background:var(--a);color:#fff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer}
+
+/* ── MAIN CONTENT ── */
+.main{max-width:660px;margin:0 auto;padding:1.25rem 1rem 5rem}
+
+/* ── SECTION ── */
+.section{display:none}.section.active{display:block}
+.sec-header{display:flex;align-items:center;gap:12px;margin-bottom:1.2rem;padding-bottom:.85rem;border-bottom:2px solid var(--g3)}
+.sec-icon{width:40px;height:40px;background:var(--g3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.sec-title{font-size:16px;font-weight:700;color:var(--g2)}
+.sec-sub{font-size:13px;color:var(--muted)}
+
+/* ── FIELDS ── */
+.field-block{margin-bottom:16px}
+.field-label{font-size:13.5px;font-weight:600;color:var(--g2);margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.req{font-size:11px;color:var(--r);background:var(--r2);padding:2px 7px;border-radius:4px;font-weight:600}
+.field-input{width:100%;min-height:44px;padding:10px 14px;font-size:15px;font-family:'Sarabun',sans-serif;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:#fff;color:var(--txt);transition:border-color .15s,box-shadow .15s;-webkit-appearance:none}
+.field-input:focus{outline:none;border-color:var(--g);box-shadow:0 0 0 3px rgba(21,128,93,.15)}
+.field-input::placeholder{color:#76998e}
+select.field-input{cursor:pointer}
+.field-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.addr-locked{width:100%;min-height:44px;display:flex;align-items:center;padding:10px 14px;font-size:14.5px;border:1.5px solid var(--g4);border-radius:var(--radius-sm);background:var(--g3);color:var(--g2);font-weight:600}
+
+/* ID Input styling */
+.id-input-wrap{position:relative;display:flex;align-items:center}
+.id-input-wrap input{padding-right:90px;font-variant-numeric:tabular-nums;letter-spacing:1px}
+.id-badge{position:absolute;right:12px;font-size:12px;font-weight:600;pointer-events:none}
+.input-valid{border-color:var(--g)!important;background:#fcfefd}
+.input-invalid{border-color:var(--r)!important;background:#fff9f9}
+.field-hint-error{font-size:12px;color:var(--r);font-weight:600;margin-top:4px}
+
+/* ── PILLS (radio/checkbox) ── */
+.pill-group{display:flex;flex-wrap:wrap;gap:8px}
+.pill{min-height:42px;display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border:1.5px solid var(--border);border-radius:22px;cursor:pointer;font-size:13.5px;font-family:'Sarabun',sans-serif;color:var(--txt);background:#fff;transition:all .15s;user-select:none}
+.pill input{display:none}
+.pill.sel{background:var(--g3);border-color:var(--g);color:var(--g2);font-weight:700;box-shadow:0 1px 4px rgba(21,128,93,.15)}
+.pill:hover:not(.sel){background:#f0fdf9;border-color:var(--g4)}
+
+/* ── QUESTION CARDS ── */
+.q-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;transition:border-color .2s,box-shadow .2s}
+.q-card.answered{border-color:var(--g);box-shadow:0 0 0 3px rgba(21,128,93,.08)}
+.q-text{font-size:14px;color:var(--txt);margin-bottom:12px;line-height:1.6;font-weight:500}
+.q-num{font-weight:700;color:var(--g2);margin-right:2px}
+.opts{display:flex;gap:6px}
+.opt{flex:1;min-height:44px;display:flex;align-items:center;justify-content:center;padding:9px 6px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-family:'Sarabun',sans-serif;color:var(--muted);text-align:center;transition:all .15s;user-select:none;line-height:1.3;font-weight:500}
+.opt input{display:none}
+.opt:hover:not(.s1):not(.s2):not(.s3){background:#f7fffe;border-color:var(--g4);color:var(--txt)}
+.opt.s1{background:var(--g3);border-color:var(--g);color:var(--g2);font-weight:700}
+.opt.s2{background:var(--a2);border-color:var(--a);color:#78350f;font-weight:700}
+.opt.s3{background:var(--r2);border-color:var(--r);color:var(--r);font-weight:700}
+
+/* score strip */
+.score-strip{display:flex;gap:8px;margin:1.1rem 0;flex-wrap:wrap}
+.sc-card{flex:1;min-width:76px;background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 8px;text-align:center}
+.sc-num{font-size:28px;font-weight:700;color:var(--txt);font-variant-numeric:tabular-nums}
+.sc-lbl{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4;font-weight:500}
+.sc-total{background:var(--g3);border-color:var(--g)}
+.sc-total .sc-num{color:var(--g2)}
+
+/* ── SYMPTOMS ── */
+.sx-section-label{font-size:13.5px;font-weight:700;color:var(--g2);margin:16px 0 8px;padding:8px 12px;background:var(--g3);border-radius:6px;border-left:4px solid var(--g)}
+.sx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:6px;margin-bottom:6px}
+.sx-item{min-height:42px;display:flex;align-items:center;gap:8px;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-family:'Sarabun',sans-serif;color:var(--txt);background:#fff;transition:all .15s;user-select:none;font-weight:500}
+.sx-item.chk{background:var(--g3);border-color:var(--g);color:var(--g2);font-weight:600}
+.sx-item.sx-danger.chk{background:var(--r2);border-color:var(--r);color:var(--r);font-weight:700}
+.sx-item input{display:none}
+.chkbox{width:18px;height:18px;border:1.5px solid var(--g4);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;background:#fff;transition:all .15s}
+.sx-item.chk .chkbox{background:var(--g);border-color:var(--g);color:#fff}
+.sx-item.sx-danger.chk .chkbox{background:var(--r);border-color:var(--r)}
+
+/* ── RESULT ── */
+.result-card{border-radius:var(--radius);padding:1.4rem 1.6rem;border:2px solid;margin:1.1rem 0}
+.r-low{background:var(--g3);border-color:var(--g);color:var(--g2)}
+.r-mid{background:var(--a2);border-color:var(--a);color:#78350f}
+.r-high{background:var(--r2);border-color:#ea580c;color:#9a3412}
+.r-vhigh{background:#fee2e2;border-color:var(--r);color:#7f1d1d}
+.r-title{font-size:22px;font-weight:700;margin-bottom:8px}
+.r-badge{display:inline-block;font-size:13px;padding:4px 14px;border-radius:20px;margin-bottom:12px;font-weight:600;background:rgba(255,255,255,.75)}
+.r-sub{font-size:14px;line-height:1.7}
+.r-action{margin-top:14px;padding:12px 16px;background:rgba(255,255,255,.65);border-radius:var(--radius-sm);font-size:13.5px;line-height:1.6}
+
+/* blood result */
+.blood-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;margin:3px}
+.bt-normal{background:#e6f7f1;color:#0a5742;border:1.5px solid #8bd9c0}
+.bt-safe{background:#dbeafe;color:#1e40af;border:1.5px solid #93c5fd}
+.bt-risk{background:#fef3c7;color:#92400e;border:1.5px solid #fcd34d}
+.bt-unsafe{background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5}
+
+/* ── CHEM TABLE ── */
+.chem-table{width:100%;border-collapse:collapse;border:1.5px solid var(--g4);border-radius:var(--radius);overflow:hidden;margin-top:8px}
+.chem-table th{font-size:13px;font-weight:600;color:var(--g2);text-align:left;padding:10px 12px;background:var(--g3);border-bottom:1.5px solid var(--g4)}
+.chem-table td{padding:4px 6px;border-bottom:1px solid #e2f2eb}
+.chem-table tr:last-child td{border-bottom:none}
+.chem-table input{width:100%;min-height:38px;border:1px solid transparent;border-radius:4px;padding:6px 10px;font-size:13.5px;font-family:'Sarabun',sans-serif;color:var(--txt);background:transparent;outline:none;transition:all .15s}
+.chem-table input:focus{background:#fff;border-color:var(--g)}
+.row-num{text-align:center;font-size:13px;font-weight:600;color:var(--muted);width:40px;background:#f5faf8;padding:8px}
+
+/* ── NAV BUTTONS ── */
+.nav-row{display:flex;gap:10px;margin-top:1.5rem}
+.btn-back{flex:1;min-height:46px;padding:12px;border:1.5px solid var(--g4);border-radius:var(--radius-sm);background:#fff;color:var(--g2);cursor:pointer;font-size:14.5px;font-family:'Sarabun',sans-serif;font-weight:600;transition:all .15s}
+.btn-back:hover{background:var(--g3)}
+.btn-next{flex:2;min-height:46px;padding:12px;border:none;border-radius:var(--radius-sm);background:var(--g);color:#fff;cursor:pointer;font-size:14.5px;font-family:'Sarabun',sans-serif;font-weight:600;transition:opacity .15s;letter-spacing:.3px}
+.btn-next:hover{opacity:.9}
+.btn-next:disabled{opacity:.5;cursor:not-allowed}
+.btn-submit{flex:2;min-height:46px;padding:12px;border:none;border-radius:var(--radius-sm);background:#0a5742;color:#fff;cursor:pointer;font-size:15px;font-family:'Sarabun',sans-serif;font-weight:700;transition:opacity .15s}
+.btn-submit:hover{opacity:.9}
+
+/* ── WARN / INFO ── */
+.warn{font-size:13px;font-weight:600;color:var(--r);background:var(--r2);padding:10px 14px;border-radius:var(--radius-sm);margin-top:10px;border:1.5px solid #fca5a5;display:none}
+.info-box{background:var(--b2);border:1.5px solid #93c5fd;border-radius:var(--radius-sm);padding:12px 15px;margin-bottom:14px;font-size:13.5px;color:#1e3a8a;line-height:1.6}
+.score-hint{font-size:12px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;margin-bottom:12px;line-height:1.6}
+
+/* ── OFFLINE NOTICE ── */
+.offline-notice{display:none;background:#1e293b;color:#cbd5e1;font-size:12.5px;font-weight:500;text-align:center;padding:7px;border-bottom:1px solid #334155}
+.offline-notice.show{display:block}
+
+/* ── SUCCESS SCREEN ── */
+.success-screen{display:none;text-align:center;padding:2.5rem 1rem}
+.success-screen.show{display:block}
+.success-icon{font-size:60px;margin-bottom:1rem}
+.success-title{font-size:24px;font-weight:700;color:var(--g2);margin-bottom:.6rem}
+.success-sub{font-size:14.5px;color:var(--muted);margin-bottom:1.6rem;line-height:1.7}
+.btn-new{display:inline-block;padding:12px 28px;background:var(--g);color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;margin:4px}
+.btn-review{display:inline-block;padding:12px 28px;background:#fff;color:var(--g2);border:1.5px solid var(--g);border-radius:var(--radius-sm);font-size:15px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;margin:4px}
+
+/* ── PRINT ── */
+@media print{
+  .app-header,.step-nav,.nav-row,.draft-banner,.offline-notice,.offline-badge{display:none!important}
+  .section{display:block!important}
+  .main{padding:0}
+  body{background:#fff}
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .chem-table, .chem-table tbody, .chem-table tr, .chem-table td{display:block;width:100%}
+  .chem-table thead, .chem-table th{display:none}
+  .chem-table tr{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;padding:8px 10px}
+  .chem-table td{border-bottom:none;padding:3px 0}
+  .chem-table td.row-num{background:none;width:auto;text-align:left;font-weight:700;color:var(--g);border-bottom:1px dashed var(--border);padding-bottom:5px;margin-bottom:6px}
+  .chem-table input{border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;background:#fcfefd;margin-top:2px}
+  .chem-table input:focus{background:#fff;border-color:var(--g)}
+}
+@media(max-width:480px){
+  .hd-title{font-size:14px}
+  .opts{flex-direction:column;gap:5px}
+  .opt{text-align:left;padding:10px 14px;justify-content:flex-start}
+  .score-strip{gap:6px}
+  .sc-num{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<!-- Offline notice -->
+<div class="offline-notice" id="offline-notice">⚠️ ไม่มีอินเทอร์เน็ต — ข้อมูลถูกบันทึกไว้ในเครื่องและจะส่งเมื่อออนไลน์</div>
+
+<!-- Header -->
+<div class="app-header">
+  <div class="hd-top">
+    <div>
+      <div class="hd-title">แบบประเมินความเสี่ยงเกษตรกรจากสารเคมีกำจัดศัตรูพืช</div>
+      <div class="hd-code">นบก.1-56 · อำเภอบ้านแพ้ว จังหวัดสมุทรสาคร</div>
+    </div>
+    <div class="offline-badge" id="conn-badge">
+      <span class="offline-dot" id="conn-dot"></span>
+      <span id="conn-txt">ออนไลน์</span>
+    </div>
+  </div>
+  <div class="prog-bar-wrap">
+    <div class="prog-track"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+    <span class="prog-txt" id="prog-txt">0 / 15 ข้อ</span>
+  </div>
+</div>
+
+<!-- Draft banner -->
+<div class="draft-banner" id="draft-banner" style="display:none">
+  <span>📝 มีข้อมูลที่บันทึกค้างไว้ — ต้องการกรอกต่อหรือไม่?</span>
+  <div style="display:flex;gap:6px">
+    <button onclick="loadDraft()">กรอกต่อ</button>
+    <button onclick="clearDraft()" style="background:#888">เริ่มใหม่</button>
+  </div>
+</div>
+
+<!-- Step nav -->
+<div class="step-nav">
+  <button class="sn-btn active" id="sn0" onclick="goStep(0)"><span class="sn-num">①</span>ข้อมูลทั่วไป</button>
+  <button class="sn-btn" id="sn1" onclick="goStep(1)"><span class="sn-num">②</span>การใช้สารเคมี</button>
+  <button class="sn-btn" id="sn2" onclick="goStep(2)"><span class="sn-num">③</span>อาการผิดปกติ</button>
+  <button class="sn-btn" id="sn3" onclick="goStep(3)"><span class="sn-num">④</span>ผลประเมิน</button>
+  <button class="sn-btn" id="sn4" onclick="goStep(4)"><span class="sn-num">⑤</span>เจาะเลือด</button>
+</div>
+
+<div class="main">
+
+<!-- ── ส่วนที่ 1 ── -->
+<div class="section active" id="s0">
+  <div class="sec-header">
+    <div class="sec-icon">📋</div>
+    <div><div class="sec-title">ส่วนที่ 1 — ข้อมูลทั่วไป</div><div class="sec-sub">กรุณากรอกข้อมูลให้ครบถ้วน</div></div>
+  </div>
+
+  <div class="field-block">
+    <div class="field-label">หมายเลขบัตรประชาชน <span class="req">จำเป็น</span></div>
+    <div class="id-input-wrap">
+      <input class="field-input" id="f-id" maxlength="17" inputmode="numeric" placeholder="X-XXXX-XXXXX-XX-X" oninput="handleIdInput(this);autoSave()">
+      <span id="id-valid-badge" class="id-badge"></span>
+    </div>
+    <div id="id-error-msg" class="field-hint-error" style="display:none">หมายเลขบัตรประชาชนไม่ถูกต้องตามสูตรคำนวณ 13 หลัก</div>
+  </div>
+
+  <div class="field-row">
+    <div class="field-block" style="margin-bottom:0">
+      <div class="field-label">คำนำหน้า</div>
+      <select class="field-input" id="f-prefix" onchange="autoSave()"><option>นาย</option><option>นาง</option><option>นางสาว</option></select>
+    </div>
+    <div class="field-block" style="grid-column:span 2;margin-bottom:0">
+      <div class="field-label">ชื่อ – นามสกุล <span class="req">จำเป็น</span></div>
+      <input class="field-input" id="f-name" placeholder="กรอกชื่อ นามสกุล" oninput="autoSave()">
+    </div>
+  </div>
+
+  <div class="field-row" style="margin-top:14px">
+    <div class="field-block" style="margin-bottom:0">
+      <div class="field-label">เพศ</div>
+      <div class="pill-group" id="rg-sex">
+        <label class="pill"><input type="radio" name="sex" value="ชาย" onchange="autoSave()"> ชาย</label>
+        <label class="pill"><input type="radio" name="sex" value="หญิง" onchange="autoSave()"> หญิง</label>
+      </div>
+    </div>
+    <div class="field-block" style="margin-bottom:0">
+      <div class="field-label">อายุ (ปี)</div>
+      <input class="field-input" id="f-age" type="number" min="1" max="100" placeholder="ระบุอายุ" oninput="autoSave()">
+    </div>
+  </div>
+
+  <div style="margin-top:14px;margin-bottom:14px">
+    <div class="field-label">ที่อยู่ปัจจุบัน</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">บ้านเลขที่ / หมู่</div>
+        <input class="field-input" id="f-addr" placeholder="เช่น 1/1 ม.5" oninput="autoSave()">
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">ตำบล <span style="color:var(--r)">*</span></div>
+        <input class="field-input" id="f-tambon" list="tambon-list" placeholder="พิมพ์หรือเลือกตำบล" oninput="autoSave()" autocomplete="off">
+        <datalist id="tambon-list">
+          <option>หลักสาม</option>
+          <option>ทุ่งอินทรีย์</option>
+          <option>โคกงูเห่า</option>
+          <option>บ้านแพ้ว</option>
+          <option>หนองสองห้อง</option>
+          <option>โรงเข้</option>
+          <option>บ้านดอนสะแก</option>
+          <option>บ้านกลางนา</option>
+          <option>บ้านดอนโฆ</option>
+          <option>หลักสอง</option>
+          <option>เจ็ดริ้ว</option>
+          <option>คลองตัน</option>
+          <option>สวนส้ม</option>
+          <option>เกษตรพัฒนา</option>
+        </datalist>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">อำเภอ</div>
+        <div class="addr-locked">บ้านแพ้ว</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">จังหวัด</div>
+        <div class="addr-locked">สมุทรสาคร</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">ถนน/ซอย (ถ้ามี)</div>
+        <input class="field-input" id="f-addr2" placeholder="ถนน ซอย" oninput="autoSave()">
+      </div>
+    </div>
+  </div>
+
+  <div class="field-block">
+    <div class="field-label">งานอาชีพหลัก</div>
+    <div class="pill-group" id="rg-job">
+      <label class="pill"><input type="radio" name="job" value="เพาะปลูก(ทำเอง)" onchange="autoSave()">เพาะปลูก (ทำเอง)</label>
+      <label class="pill"><input type="radio" name="job" value="เพาะปลูก(รับจ้าง)" onchange="autoSave()">เพาะปลูก (รับจ้าง)</label>
+      <label class="pill"><input type="radio" name="job" value="รับจ้างฉีดพ่น" onchange="autoSave()">รับจ้างฉีดพ่น</label>
+      <label class="pill"><input type="radio" name="job" value="รับจ้างอื่นๆ" onchange="autoSave()">รับจ้างอื่นๆ</label>
+    </div>
+  </div>
+
+  <div class="field-block">
+    <div class="field-label">ปัจจุบันทำการเพาะปลูกอะไรเป็นหลัก</div>
+    <div class="pill-group" id="rg-crop" style="margin-bottom:8px">
+      <label class="pill"><input type="radio" name="crop" value="ไร่" onchange="autoSave()">ทำไร่</label>
+      <label class="pill"><input type="radio" name="crop" value="นา" onchange="autoSave()">ทำนา</label>
+      <label class="pill"><input type="radio" name="crop" value="สวน" onchange="autoSave()">ทำสวน</label>
+    </div>
+    <input class="field-input" id="f-crop-detail" placeholder="ระบุชนิดพืช เช่น ข้าว อ้อย มันสำปะหลัง" oninput="autoSave()">
+  </div>
+
+  <div class="field-block">
+    <div class="field-label">เกี่ยวข้องกับการใช้สารเคมีอย่างไร <span style="font-weight:400;color:var(--muted);font-size:11px">(เลือกได้มากกว่า 1 ข้อ)</span></div>
+    <div class="pill-group" id="involve-chk">
+      <label class="pill"><input type="checkbox" value="ผสมสารเคมี" onchange="autoSave()">เป็นผู้ผสมสารเคมี</label>
+      <label class="pill"><input type="checkbox" value="ฉีดพ่นเอง" onchange="autoSave()">เป็นผู้ฉีดพ่นเอง</label>
+      <label class="pill"><input type="checkbox" value="อยู่ในบริเวณที่ฉีดพ่น" onchange="autoSave()">อยู่ในบริเวณที่ฉีดพ่น</label>
+      <label class="pill"><input type="checkbox" value="รับจ้างฉีดพ่น" onchange="autoSave()">รับจ้างฉีดพ่น</label>
+      <label class="pill"><input type="checkbox" value="สัมผัสผักผลไม้ที่ฉีดพ่น" onchange="autoSave()">สัมผัสผักผลไม้ที่ฉีดพ่น</label>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field-block" style="margin-bottom:0;grid-column:span 2">
+      <div class="field-label">สถานบริการสุขภาพ <span class="req">จำเป็น</span></div>
+      <select class="field-input" id="f-hosp" onchange="autoSave()">
+        <option value="">— เลือกสถานบริการสุขภาพ —</option>
+        <option>รพ.สต.หลักสาม</option><option>รพ.สต.ทุ่งอินทรีย์</option>
+        <option>รพ.สต.โคกงูเห่า</option><option>รพ.สต.บ้านทำนบแพ้ว</option>
+        <option>รพ.สต.โรงเข้</option><option>รพ.สต.บ้านดอนสะแก</option>
+        <option>รพ.สต.บ้านกลางนา</option><option>รพ.สต.หนองสองห้อง</option>
+        <option>รพ.สต.บ้านกลางคลองสองห้อง</option><option>รพ.สต.บ้านดอนโฆ</option>
+        <option>รพ.สต.หลักสอง</option><option>รพ.สต.บ้านรางช้างสี</option>
+        <option>รพ.สต.เจ็ดริ้ว</option><option>รพ.สต.คลองตัน</option>
+        <option>รพ.สต.บ้านช่องสาร</option><option>รพ.สต.บ้านท่าแร้ง</option>
+        <option>รพ.สต.สวนส้ม</option><option>รพ.สต.บ้านคลองตัน</option>
+        <option>รพ.สต.เกษตรพัฒนา</option><option>รพ.บ้านแพ้ว</option>
+      </select>
+    </div>
+    <div class="field-block" style="margin-bottom:0">
+      <div class="field-label">วันที่ประเมิน</div>
+      <input class="field-input" type="date" id="f-date" onchange="autoSave()">
+    </div>
+  </div>
+
+  <div class="field-row" style="margin-top:10px">
+    <div class="field-block" style="margin-bottom:0">
+      <div class="field-label">ผู้สัมภาษณ์</div>
+      <input class="field-input" id="f-inter" placeholder="ชื่อผู้สัมภาษณ์" oninput="autoSave()">
+    </div>
+    <div class="field-block" style="margin-bottom:0">
+      <div class="field-label">ตำแหน่ง</div>
+      <input class="field-input" id="f-pos" placeholder="ตำแหน่ง" oninput="autoSave()">
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-next" onclick="toStep1()">ถัดไป — ส่วนที่ 2 →</button>
+  </div>
+  <div class="warn" id="warn-s0">กรุณากรอกหมายเลขบัตรประชาชน, ชื่อ-นามสกุล และสถานบริการสุขภาพ</div>
+</div>
+
+<!-- ── ส่วนที่ 2 ── -->
+<div class="section" id="s1">
+  <div class="sec-header">
+    <div class="sec-icon">🧪</div>
+    <div><div class="sec-title">ส่วนที่ 2 — พฤติกรรมการใช้สารเคมี</div><div class="sec-sub">ข้อ 9–23 ตอบให้ครบทุกข้อ</div></div>
+  </div>
+
+  <div class="score-hint">
+    <strong>ส่วน A (ข้อ 9–17):</strong> ไม่ใช่ = 1 คะแนน | ใช้เป็นบางครั้ง = 2 | ใช้ทุกครั้ง = 3<br>
+    <strong>ส่วน B (ข้อ 18–23):</strong> ไม่ใช่ = 3 คะแนน | ใช้เป็นบางครั้ง = 2 | ใช้ทุกครั้ง = 1
+  </div>
+
+  <div id="qA-wrap"></div>
+  <div id="qB-wrap"></div>
+
+  <div class="score-strip">
+    <div class="sc-card"><div class="sc-num" id="sc-a">0</div><div class="sc-lbl">ส่วน A<br>(ข้อ 9–17)</div></div>
+    <div class="sc-card"><div class="sc-num" id="sc-b">0</div><div class="sc-lbl">ส่วน B<br>(ข้อ 18–23)</div></div>
+    <div class="sc-card sc-total"><div class="sc-num" id="sc-tot">0</div><div class="sc-lbl">คะแนนรวม<br>(9–23)</div></div>
+  </div>
+
+  <div class="warn" id="warn-s1">กรุณาตอบให้ครบทุกข้อ (ข้อ 9–23)</div>
+  <div class="nav-row">
+    <button class="btn-back" onclick="goStep(0)">← ย้อนกลับ</button>
+    <button class="btn-next" onclick="nextS1()">ถัดไป — ส่วนที่ 3 →</button>
+  </div>
+</div>
+
+<!-- ── ส่วนที่ 3 ── -->
+<div class="section" id="s2">
+  <div class="sec-header">
+    <div class="sec-icon">🩺</div>
+    <div><div class="sec-title">ส่วนที่ 3 — อาการผิดปกติใน 1 เดือนที่ผ่านมา</div><div class="sec-sub">ทำเครื่องหมายที่อาการที่มีหลังสัมผัสสารเคมี</div></div>
+  </div>
+
+  <div class="sx-section-label">กลุ่มที่ 1 — อาการทั่วไป (ผิวหนัง ระบบหายใจ ดวงตา)</div>
+  <div class="sx-grid" id="sx1"></div>
+
+  <div class="sx-section-label">กลุ่มที่ 2 — อาการระบบประสาทอัตโนมัติ</div>
+  <div class="sx-grid" id="sx2"></div>
+
+  <div class="sx-section-label" style="background:var(--r2);border-left-color:var(--r);color:var(--r)">⚠️ กลุ่มที่ 3 — อาการรุนแรง (ระบบประสาทส่วนกลาง)</div>
+  <div class="sx-grid" id="sx3"></div>
+
+  <div id="sx3-alert" style="display:none;margin-top:8px" class="info-box" style="background:#FCEBEB;border-color:#A32D2D;color:#791F1F">
+    ⚠️ ตรวจพบอาการกลุ่มที่ 3 — ควรพิจารณาส่งต่อแพทย์ทันที
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-back" onclick="goStep(1)">← ย้อนกลับ</button>
+    <button class="btn-next" onclick="calcAndShow()">ดูผลประเมิน →</button>
+  </div>
+</div>
+
+<!-- ── ส่วนที่ 4 ── -->
+<div class="section" id="s3">
+  <div class="sec-header">
+    <div class="sec-icon">📊</div>
+    <div><div class="sec-title">ส่วนที่ 4 — สรุปผลการประเมินความเสี่ยง</div><div class="sec-sub">คำนวณจากข้อ 9–23 และอาการที่พบ</div></div>
+  </div>
+
+  <div class="score-strip">
+    <div class="sc-card"><div class="sc-num" id="r-scA">0</div><div class="sc-lbl">ส่วน A (9–17)</div></div>
+    <div class="sc-card"><div class="sc-num" id="r-scB">0</div><div class="sc-lbl">ส่วน B (18–23)</div></div>
+    <div class="sc-card sc-total"><div class="sc-num" id="r-scTot">0</div><div class="sc-lbl">คะแนนรวม</div></div>
+    <div class="sc-card"><div class="sc-num" id="r-sg" style="font-size:15px;padding-top:4px">—</div><div class="sc-lbl">กลุ่มอาการ</div></div>
+  </div>
+
+  <div id="result-box"></div>
+
+  <div style="font-size:12px;color:var(--muted);margin-top:10px;padding:8px 12px;background:#f7f7f5;border-radius:var(--radius-sm);line-height:1.6" id="matrix-note"></div>
+
+  <!-- ปุ่มแก้ไขข้อมูล -->
+  <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+    <button onclick="goStep(0)" style="flex:1;padding:9px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:#fff;color:var(--muted);cursor:pointer;font-size:13px;font-family:'Sarabun',sans-serif">✏️ แก้ไขข้อมูลทั่วไป</button>
+    <button onclick="goStep(1)" style="flex:1;padding:9px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:#fff;color:var(--muted);cursor:pointer;font-size:13px;font-family:'Sarabun',sans-serif">✏️ แก้ไขการใช้สารเคมี</button>
+    <button onclick="goStep(2)" style="flex:1;padding:9px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:#fff;color:var(--muted);cursor:pointer;font-size:13px;font-family:'Sarabun',sans-serif">✏️ แก้ไขอาการ</button>
+  </div>
+
+  <div class="nav-row" style="flex-direction:column;gap:10px">
+    <div style="display:flex;gap:10px;width:100%">
+      <button class="btn-back" onclick="goStep(2)">← ย้อนกลับ</button>
+      <button class="btn-next" id="btn-to-s4" onclick="goStep(4)" style="flex:2">ส่วนที่ 5 — เจาะเลือด →</button>
+    </div>
+    <button class="btn-submit" id="btn-direct-submit" onclick="submitForm()" style="width:100%;background:#0a5742;display:none;padding:12px;margin-top:2px">
+      ✅ บันทึกและส่งข้อมูล (ไม่ต้องตรวจเลือด)
+    </button>
+  </div>
+</div>
+
+<!-- ── ส่วนที่ 5 ── -->
+<div class="section" id="s4">
+  <div class="sec-header">
+    <div class="sec-icon">🩸</div>
+    <div><div class="sec-title">ส่วนที่ 5 — ตรวจระดับเอ็นไซม์คลอรีนเอสเตอเรส</div><div class="sec-sub">เฉพาะผู้ใช้สารเคมีกำจัดแมลง</div></div>
+  </div>
+
+  <div class="info-box">เฉพาะกลุ่มที่มีการใช้สารเคมีกำจัดแมลง — <strong>ไม่ตรวจ</strong>ในผู้ที่ใช้เฉพาะสารเคมีกำจัดวัชพืช (ยาฆ่าหญ้า)</div>
+
+  <div class="field-block">
+    <div class="field-label">1. โรคประจำตัว <span style="font-weight:400;color:var(--muted);font-size:12px">(เลือกได้มากกว่า 1 ข้อ)</span></div>
+    <div class="pill-group" id="disease-chk">
+      <label class="pill"><input type="checkbox" value="เบาหวาน" onchange="handleDiseaseChange(this)">โรคเบาหวาน</label>
+      <label class="pill"><input type="checkbox" value="ไต" onchange="handleDiseaseChange(this)">โรคไต</label>
+      <label class="pill"><input type="checkbox" value="ตับ" onchange="handleDiseaseChange(this)">โรคตับ</label>
+      <label class="pill"><input type="checkbox" value="ขาดสารอาหาร" onchange="handleDiseaseChange(this)">ขาดสารอาหาร</label>
+      <label class="pill"><input type="checkbox" value="พิษสุราเรื้อรัง" onchange="handleDiseaseChange(this)">โรคพิษสุราเรื้อรัง</label>
+      <label class="pill"><input type="checkbox" value="ไม่มี" onchange="handleDiseaseChange(this)">ไม่มี</label>
+    </div>
+  </div>
+
+  <div class="field-block">
+    <div class="field-label">2. รับประทานยาคลายกล้ามเนื้อ pyridostigmine / bromide หรือไม่</div>
+    <div class="pill-group" id="rg-med">
+      <label class="pill"><input type="radio" name="med" value="รับประทาน" onchange="autoSave()">รับประทาน</label>
+      <label class="pill"><input type="radio" name="med" value="ไม่ได้รับประทาน" onchange="autoSave()">ไม่ได้รับประทาน</label>
+    </div>
+  </div>
+
+  <div class="field-block">
+    <div class="field-label">3. ฉีดพ่น/สัมผัสสารเคมีครั้งหลังสุดเมื่อไหร่</div>
+    <div class="pill-group" id="rg-last">
+      <label class="pill"><input type="radio" name="last" value="1-2วัน" onchange="autoSave()">1–2 วันที่ผ่านมา</label>
+      <label class="pill"><input type="radio" name="last" value="3-7วัน" onchange="autoSave()">3–7 วัน</label>
+      <label class="pill"><input type="radio" name="last" value="8-14วัน" onchange="autoSave()">มากกว่า 7–14 วัน</label>
+      <label class="pill"><input type="radio" name="last" value="14วันขึ้นไป" onchange="autoSave()">14 วันขึ้นไป</label>
+    </div>
+  </div>
+
+  <div class="field-block">
+    <div class="field-label">4. จำนวนวันเฉลี่ยของการใช้สารเคมีต่อเดือน</div>
+    <div class="pill-group" id="rg-days">
+      <label class="pill"><input type="radio" name="days" value="น้อยกว่า7วัน" onchange="autoSave()">น้อยกว่า 7 วัน/เดือน</label>
+      <label class="pill"><input type="radio" name="days" value="มากกว่า7วัน" onchange="autoSave()">มากกว่า 7 วัน/เดือน</label>
+    </div>
+  </div>
+
+  <div class="field-block">
+    <div class="field-label">5. ใช้สารเคมีเพื่อวัตถุประสงค์ใด</div>
+    <div class="pill-group" id="purpose-chk">
+      <label class="pill"><input type="checkbox" value="กำจัดแมลง" onchange="autoSave()">กำจัดแมลง</label>
+      <label class="pill"><input type="checkbox" value="กำจัดวัชพืช" onchange="autoSave()">กำจัดวัชพืช</label>
+      <label class="pill"><input type="checkbox" value="อื่นๆ" onchange="autoSave()">อื่นๆ</label>
+    </div>
+  </div>
+
+  <div class="field-block">
+    <div class="field-label">6. ระบุชื่อสารเคมีที่ใช้</div>
+    <table class="chem-table">
+      <tr><th style="width:40px">ลำดับ</th><th>ชื่อการค้า</th><th>ชื่อสามัญ (ถ้าทราบ)</th></tr>
+      <tr><td class="row-num">1</td><td><input placeholder="ชื่อการค้า" oninput="autoSave()"></td><td><input placeholder="ชื่อสามัญ" oninput="autoSave()"></td></tr>
+      <tr><td class="row-num">2</td><td><input placeholder="ชื่อการค้า" oninput="autoSave()"></td><td><input placeholder="ชื่อสามัญ" oninput="autoSave()"></td></tr>
+      <tr><td class="row-num">3</td><td><input placeholder="ชื่อการค้า" oninput="autoSave()"></td><td><input placeholder="ชื่อสามัญ" oninput="autoSave()"></td></tr>
+      <tr><td class="row-num">4</td><td><input placeholder="ชื่อการค้า" oninput="autoSave()"></td><td><input placeholder="ชื่อสามัญ" oninput="autoSave()"></td></tr>
+      <tr><td class="row-num">5</td><td><input placeholder="ชื่อการค้า" oninput="autoSave()"></td><td><input placeholder="ชื่อสามัญ" oninput="autoSave()"></td></tr>
+    </table>
+  </div>
+
+  <div class="field-block">
+    <div class="field-label">ผลการตรวจเอ็นไซม์คลอรีนเอสเตอเรส</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
+      <label class="pill"><input type="radio" name="blood" value="ปกติ" onchange="showBloodResult(this.value)"> 1. ปกติ</label>
+      <label class="pill"><input type="radio" name="blood" value="ปลอดภัย" onchange="showBloodResult(this.value)"> 2. ปลอดภัย</label>
+      <label class="pill"><input type="radio" name="blood" value="มีความเสี่ยง" onchange="showBloodResult(this.value)"> 3. มีความเสี่ยง</label>
+      <label class="pill"><input type="radio" name="blood" value="ไม่ปลอดภัย" onchange="showBloodResult(this.value)"> 4. ไม่ปลอดภัย</label>
+    </div>
+    <div id="blood-result-msg" style="margin-top:8px;display:none"></div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-back" onclick="goStep(3)">← ย้อนกลับ</button>
+    <button class="btn-submit" onclick="submitForm()">✅ บันทึกและส่งข้อมูล</button>
+  </div>
+</div>
+
+<!-- ── สำเร็จ ── -->
+<div class="success-screen" id="success-screen">
+  <div class="success-icon">✅</div>
+  <div class="success-title">บันทึกข้อมูลสำเร็จ</div>
+  <div class="success-sub" id="success-name"></div>
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+    <button class="btn-new" onclick="resetForm()">+ บันทึกรายถัดไป</button>
+    <button class="btn-review" onclick="printForm()">🖨️ พิมพ์ใบสรุป</button>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+const qAdata=[
+  {n:9,t:"ท่านใช้สารเคมีกำจัดแมลงในการปฏิบัติงานหรือไม่"},
+  {n:10,t:"ท่านใช้สารเคมีกำจัดวัชพืชในการฉีดพ่น หรือไม่"},
+  {n:11,t:"ท่านใช้ถังบรรจุสารเคมีที่รั่วซึมหรือปิดไม่สนิทในการฉีดพ่น หรือไม่"},
+  {n:12,t:"ท่านได้รับสัมผัสสารเคมีกำจัดศัตรูพืชในขณะทำงานหรือไม่"},
+  {n:13,t:"ขณะทำงานท่านพบว่าเสื้อผ้าเปียกชุ่มสารเคมีกำจัดศัตรูพืชหรือไม่"},
+  {n:14,t:"ท่านมีอาการผิดปกติหลังจากการใช้สารเคมีกำจัดศัตรูพืช หรือไม่"},
+  {n:15,t:"ขณะทำงานท่านสูบบุหรี่/ยาเส้น หรือไม่"},
+  {n:16,t:"ท่านรับประทานอาหาร/ดื่มน้ำในบริเวณที่ทำงาน หรือไม่"},
+  {n:17,t:"ท่านดื่มเหล้า/เบียร์/เครื่องดื่มแอลกอฮอล์ ในบริเวณที่ทำงาน หรือไม่"}
+];
+const qBdata=[
+  {n:18,t:"ก่อนการใช้สารเคมี ท่านอ่านฉลากที่ภาชนะบรรจุ หรือไม่"},
+  {n:19,t:"ขณะทำงานกับสารเคมีท่านสวมถุงมือยางป้องกันสารเคมี หรือไม่"},
+  {n:20,t:"ท่านสวมใส่รองเท้าบู๊ทหรือรองเท้าที่ปิดมิดชิดกันสารเคมี หรือไม่"},
+  {n:21,t:"ท่านล้างมือทุกครั้งก่อนพักทานอาหารหรือดื่มน้ำ หรือไม่"},
+  {n:22,t:"หลังเลิกการฉีดพ่นท่านเปลี่ยนเสื้อผ้าที่เปื้อนสารเคมีทันที ณ บริเวณที่ทำงาน หรือไม่"},
+  {n:23,t:"เมื่อเสื้อผ้าเปียกชุ่มสารเคมี ท่านอาบน้ำทำความสะอาดร่างกายหลังเลิกงานทันที ณ บริเวณที่ทำงาน หรือไม่"}
+];
+const sx1d=["ไอ","แสบจมูก","เจ็บคอ คอแห้ง","หายใจติดขัด","เวียนศีรษะ","ปวดศีรษะ","นอนหลับไม่สนิท","คันผิวหนัง","ผื่นคัน/ตุ่มพุพอง","ปวดแสบร้อน","ตาแดง/แสบตา"];
+const sx2d=["อ่อนเพลีย","อาการชา","ใจสั่น","เหงื่อออก","น้ำตาไหล","น้ำลายไหล","น้ำมูกไหล","หนังตากระตุก","ตาพร่ามัว","เจ็บหน้าอก","คลื่นไส้อาเจียน","ปวดท้อง","ท้องเสีย","กล้ามเนื้ออ่อนล้า"];
+const sx3d=["เป็นตะคริว","มือสั่น","เดินโซเซ","ลมชัก","หมดสติ","ไม่รู้สึกตัว"];
+
+const ans={};const totalQ=15;
+let saveTimer=null;
+
+/* ── THAI ID VALIDATION & MASKING ── */
+function validateThaiCitizenId(idStr){
+  const cleanId=(idStr||'').replace(/\D/g,'');
+  if(cleanId.length!==13) return false;
+  let sum=0;
+  for(let i=0;i<12;i++){
+    sum+=parseInt(cleanId.charAt(i),10)*(13-i);
+  }
+  const checkDigit=(11-(sum%11))%10;
+  return checkDigit===parseInt(cleanId.charAt(12),10);
+}
+
+function formatThaiId(val){
+  const digits=(val||'').replace(/\D/g,'').substring(0,13);
+  const parts=[];
+  if(digits.length>0) parts.push(digits.substring(0,1));
+  if(digits.length>1) parts.push(digits.substring(1,5));
+  if(digits.length>5) parts.push(digits.substring(5,10));
+  if(digits.length>10) parts.push(digits.substring(10,12));
+  if(digits.length>12) parts.push(digits.substring(12,13));
+  return parts.join('-');
+}
+
+function handleIdInput(el){
+  const raw=el.value.replace(/\D/g,'');
+  el.value=formatThaiId(el.value);
+  const badge=document.getElementById('id-valid-badge');
+  const err=document.getElementById('id-error-msg');
+  if(raw.length===0){
+    if(badge) badge.innerHTML='';
+    if(err) err.style.display='none';
+    el.classList.remove('input-valid','input-invalid');
+    return;
+  }
+  if(raw.length===13){
+    const isValid=validateThaiCitizenId(raw);
+    if(isValid){
+      if(badge) badge.innerHTML='<span style="color:#0a5742">✓ ถูกต้อง</span>';
+      if(err) err.style.display='none';
+      el.classList.add('input-valid');
+      el.classList.remove('input-invalid');
+    }else{
+      if(badge) badge.innerHTML='<span style="color:var(--r)">✗ เลขไม่ถูกต้อง</span>';
+      if(err){
+        err.textContent='หมายเลขบัตรประชาชนไม่ถูกต้องตามสูตรคำนวณ 13 หลัก';
+        err.style.display='block';
+      }
+      el.classList.add('input-invalid');
+      el.classList.remove('input-valid');
+    }
+  }else{
+    if(badge) badge.innerHTML=`<span style="color:var(--muted)">${raw.length}/13</span>`;
+    if(err) err.style.display='none';
+    el.classList.remove('input-valid','input-invalid');
+  }
+}
+
+/* ── MUTUAL EXCLUSIVITY FOR DISEASES ── */
+function handleDiseaseChange(inp){
+  const wrap=document.getElementById('disease-chk');
+  if(inp.value==='ไม่มี'&&inp.checked){
+    wrap.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
+      if(cb.value!=='ไม่มี'){
+        cb.checked=false;
+        cb.closest('.pill').classList.remove('sel');
+      }
+    });
+  }else if(inp.value!=='ไม่มี'&&inp.checked){
+    const noneCb=wrap.querySelector('input[value="ไม่มี"]');
+    if(noneCb&&noneCb.checked){
+      noneCb.checked=false;
+      noneCb.closest('.pill').classList.remove('sel');
+    }
+  }
+  inp.closest('.pill').classList.toggle('sel',inp.checked);
+  autoSave();
+}
+
+/* ── BUILD QUESTIONS ── */
+function buildQ(arr,isB,wrapId){
+  const optsA=[{l:"ไม่ใช่",v:1,c:"s1"},{l:"เป็นบางครั้ง",v:2,c:"s2"},{l:"ทุกครั้ง",v:3,c:"s3"}];
+  // ข้อ 18-23: พฤติกรรมป้องกัน -> ตอบทุกครั้งคือปลอดภัย (s1), ไม่ใช่คือเสี่ยงสูง (s3)
+  const optsB=[{l:"ไม่ใช่",v:3,c:"s3"},{l:"เป็นบางครั้ง",v:2,c:"s2"},{l:"ทุกครั้ง",v:1,c:"s1"}];
+  const opts=isB?optsB:optsA;
+  const wrap=document.getElementById(wrapId);
+  arr.forEach(q=>{
+    const c=document.createElement('div');
+    c.className='q-card';c.id='qcard'+q.n;
+    c.innerHTML=`<div class="q-text"><span class="q-num">${q.n}.</span> ${q.t}</div><div class="opts" id="row${q.n}"></div>`;
+    wrap.appendChild(c);
+    const row=c.querySelector('.opts');
+    opts.forEach(o=>{
+      const lbl=document.createElement('label');
+      lbl.className='opt';
+      lbl.innerHTML=`<input type="radio" name="q${q.n}" value="${o.v}">${o.l}`;
+      lbl.onclick=()=>{
+        row.querySelectorAll('.opt').forEach(x=>x.className='opt');
+        lbl.className=`opt ${o.c}`;
+        ans[q.n]=o.v;c.classList.add('answered');
+        updateScore();autoSave();
+      };
+      row.appendChild(lbl);
+    });
+  });
+}
+
+function buildSx(arr,id,isDanger){
+  const g=document.getElementById(id);
+  arr.forEach(s=>{
+    const lbl=document.createElement('label');
+    lbl.className='sx-item'+(isDanger?' sx-danger':'');
+    lbl.innerHTML=`<input type="checkbox" value="${s}"><span class="chkbox"></span><span>${s}</span>`;
+    lbl.querySelector('input').onchange=function(){
+      lbl.classList.toggle('chk',this.checked);
+      lbl.querySelector('.chkbox').innerHTML=this.checked?'✓':'';
+      if(isDanger){
+        const hasD=document.querySelectorAll('#sx3 input:checked').length>0;
+        document.getElementById('sx3-alert').style.display=hasD?'block':'none';
+      }
+      autoSave();
+    };
+    g.appendChild(lbl);
+  });
+}
+
+function updateScore(){
+  let a=0,b=0;
+  qAdata.forEach(q=>{if(ans[q.n])a+=ans[q.n];});
+  qBdata.forEach(q=>{if(ans[q.n])b+=ans[q.n];});
+  document.getElementById('sc-a').textContent=a;
+  document.getElementById('sc-b').textContent=b;
+  document.getElementById('sc-tot').textContent=a+b;
+  const done=Object.keys(ans).length;
+  document.getElementById('prog').style.width=Math.round(done/totalQ*100)+'%';
+  document.getElementById('prog-txt').textContent=`${done} / ${totalQ} ข้อ`;
+}
+
+/* ── SCORING ── */
+function getSxGroup(){
+  if(document.querySelectorAll('#sx3 input:checked').length>0)return 3;
+  if(document.querySelectorAll('#sx2 input:checked').length>0)return 2;
+  if(document.querySelectorAll('#sx1 input:checked').length>0)return 1;
+  return 0;
+}
+function getRisk(total,sg){
+  const col=total<=24?0:total<=30?1:2;
+  const grid=[["ต่ำ","ปานกลาง","ค่อนข้างสูง"],["ปานกลาง","ค่อนข้างสูง","สูง"],["ค่อนข้างสูง","สูง","สูง"],["สูง","สูง","สูงมาก"]];
+  return grid[sg][col];
+}
+
+function calcAndShow(){
+  let a=0,b=0;
+  qAdata.forEach(q=>{if(ans[q.n])a+=ans[q.n];});
+  qBdata.forEach(q=>{if(ans[q.n])b+=ans[q.n];});
+  const total=a+b,sg=getSxGroup(),risk=getRisk(total,sg);
+  const sgLabel=["ไม่มีอาการ","กลุ่มที่ 1","กลุ่มที่ 2","กลุ่มที่ 3"][sg];
+  document.getElementById('r-scA').textContent=a;
+  document.getElementById('r-scB').textContent=b;
+  document.getElementById('r-scTot').textContent=total;
+  document.getElementById('r-sg').textContent=sgLabel;
+  const rMap={
+    "ต่ำ":{cls:"r-low",icon:"🟢",action:"ติดตามสุขภาพต่อเนื่อง ควรใช้อุปกรณ์ป้องกันและปฏิบัติตามขั้นตอนความปลอดภัย",blood:false},
+    "ปานกลาง":{cls:"r-mid",icon:"🟡",action:"ควรปรับพฤติกรรมการใช้สารเคมีและติดตามสุขภาพอย่างสม่ำเสมอ",blood:false},
+    "ค่อนข้างสูง":{cls:"r-high",icon:"🟠",action:"ควรตรวจคัดกรองสุขภาพเพื่อหาระดับเอ็นไซม์คลอรีนเอสเตอเรส",blood:true},
+    "สูง":{cls:"r-high",icon:"🔴",action:"ต้องตรวจคัดกรองสุขภาพเพื่อหาระดับเอ็นไซม์คลอรีนเอสเตอเรสโดยด่วน",blood:true},
+    "สูงมาก":{cls:"r-vhigh",icon:"🚨",action:"ต้องพบแพทย์หรือเจ้าหน้าที่สาธารณสุขทันที และตรวจระดับเอ็นไซม์คลอรีนเอสเตอเรส",blood:true}
+  };
+  const m=rMap[risk];
+  const sr=total<=24?"15–24":total<=30?"25–30":"31–45";
+  document.getElementById('result-box').innerHTML=`
+    <div class="result-card ${m.cls}">
+      <div class="r-badge">${m.icon} คะแนนรวม ${total} คะแนน (${sr}) · อาการ: ${sgLabel}</div>
+      <div class="r-title">ระดับความเสี่ยง: ${risk}</div>
+      <div class="r-action">📋 <strong>คำแนะนำ:</strong> ${m.action}${m.blood?'<br>🩸 ควรนำผู้รับการประเมินตรวจเจาะเลือดหาระดับเอ็นไซม์คลอรีนเอสเตอเรส (ดำเนินการต่อในส่วนที่ 5)':''}</div>
+    </div>`;
+  document.getElementById('matrix-note').innerHTML='ℹ️ หมายเหตุ: หากพบอาการทั้งกลุ่มที่ 1 และกลุ่มที่ 2 ให้เลือกกลุ่มที่มีความเสี่ยงสูงกว่า (กลุ่มที่ 2) มาใช้ในการหาระดับความเสี่ยง';
+  
+  // Smart button routing in step 4
+  const directBtn=document.getElementById('btn-direct-submit');
+  const toBloodBtn=document.getElementById('btn-to-s4');
+  if(directBtn&&toBloodBtn){
+    if(!m.blood){
+      directBtn.style.display='block';
+      directBtn.innerHTML='✅ บันทึกและส่งข้อมูล (ความเสี่ยงต่ำ-ปานกลาง ไม่จำเป็นต้องตรวจเลือด)';
+      toBloodBtn.style.background='#426156';
+      toBloodBtn.textContent='ส่วนที่ 5 — เจาะเลือด (ถ้ามีประวัติใช้ยากำจัดแมลง) →';
+    }else{
+      directBtn.style.display='block';
+      directBtn.style.background='#426156';
+      directBtn.innerHTML='บันทึกข้อมูลโดยไม่ตรวจเลือด';
+      toBloodBtn.style.background='var(--r)';
+      toBloodBtn.textContent='🩸 แนะนำตรวจเลือด: ไปยังส่วนที่ 5 →';
+    }
+  }
+
+  goStep(3,true);
+}
+
+/* ── BLOOD RESULT ── */
+function showBloodResult(v){
+  const map={
+    "ปกติ":{cls:"bt-normal",msg:"ผลปกติ — ระดับเอ็นไซม์อยู่ในเกณฑ์ปกติ"},
+    "ปลอดภัย":{cls:"bt-safe",msg:"ปลอดภัย — ระดับเอ็นไซม์อยู่ในระดับที่ยอมรับได้"},
+    "มีความเสี่ยง":{cls:"bt-risk",msg:"⚠️ มีความเสี่ยง — ควรติดตามและลดการสัมผัสสารเคมี"},
+    "ไม่ปลอดภัย":{cls:"bt-unsafe",msg:"🚨 ไม่ปลอดภัย — ต้องหยุดสัมผัสสารเคมีและพบแพทย์ทันที"}
+  };
+  const m=map[v];
+  const el=document.getElementById('blood-result-msg');
+  el.style.display='block';
+  el.innerHTML=`<span class="blood-tag ${m.cls}">${m.msg}</span>`;
+  document.querySelectorAll('[name="blood"]').forEach(r=>{
+    r.closest('label').classList.toggle('sel',r.value===v);
+  });
+  autoSave();
+}
+
+/* ── NAVIGATION & STEP GUARD ── */
+function canAccessStep(targetStep){
+  if(targetStep===0) return {ok:true};
+
+  // เช็คส่วนที่ 1
+  const id=document.getElementById('f-id').value.replace(/\D/g,'');
+  const name=document.getElementById('f-name').value.trim();
+  const hosp=document.getElementById('f-hosp').value;
+  if(!id||id.length<13||!name||!hosp){
+    return {ok:false,step:0,msg:'กรุณากรอกเลขบัตรประชาชน, ชื่อ-นามสกุล และสถานบริการสุขภาพในส่วนที่ 1 ให้ครบถ้วน'};
+  }
+
+  // เช็คส่วนที่ 2 (ข้อ 9-23)
+  if(targetStep>=2){
+    if(Object.keys(ans).length<totalQ){
+      return {ok:false,step:1,msg:`กรุณาตอบคำถามพฤติกรรมในส่วนที่ 2 ให้ครบทุกข้อ (${Object.keys(ans).length}/${totalQ} ข้อ)`};
+    }
+  }
+
+  return {ok:true};
+}
+
+function toStep1(){
+  const check=canAccessStep(1);
+  if(!check.ok){
+    const w=document.getElementById('warn-s0');
+    if(w){w.textContent=check.msg;w.style.display='block';setTimeout(()=>w.style.display='none',4500);}
+    showToast(check.msg,'error');
+    return;
+  }
+  goStep(1,true);
+}
+
+function nextS1(){
+  const check=canAccessStep(2);
+  if(!check.ok){
+    const w=document.getElementById('warn-s1');
+    if(w){w.textContent=check.msg;w.style.display='block';setTimeout(()=>w.style.display='none',4500);}
+    showToast(check.msg,'error');
+    return;
+  }
+  goStep(2,true);
+}
+
+function goStep(n,force=false){
+  if(!force){
+    const check=canAccessStep(n);
+    if(!check.ok){
+      showToast(`⚠️ ${check.msg}`,'error');
+      const w=document.getElementById(`warn-s${check.step}`);
+      if(w){w.textContent=check.msg;w.style.display='block';setTimeout(()=>w.style.display='none',4500);}
+      return;
+    }
+  }
+  document.querySelectorAll('.section').forEach((s,i)=>s.classList.toggle('active',i===n));
+  document.querySelectorAll('.sn-btn').forEach((b,i)=>{
+    b.className='sn-btn'+(i===n?' active':i<n?' done':'');
+  });
+  document.getElementById('success-screen').classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ── APPS SCRIPT URL — วางลิงก์ Web App ที่นี่ ── */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzrECCLO9FFrlpdrFzOkci-aotgPe-XHe12KRgj-0w_OITamdA8n_w9BzPFpeFgB7yT/exec';
+
+/* ── รวบรวมข้อมูลทั้งหมดจากฟอร์ม ── */
+function collectFormData(){
+  const getVal=id=>document.getElementById(id)?.value||'';
+  const getRadio=name=>{const r=document.querySelector(`input[name="${name}"]:checked`);return r?r.value:''};
+  const getChecks=id=>[...document.querySelectorAll(`#${id} input:checked`)].map(x=>x.value);
+  const getChemRow=r=>{
+    const cells=document.querySelectorAll(`.chem-table tr:nth-child(${r+1}) input`);
+    return{trade:cells[0]?.value||'',common:cells[1]?.value||''};
+  };
+
+  // คะแนน
+  let scA=0,scB=0;
+  qAdata.forEach(q=>{if(ans[q.n])scA+=ans[q.n];});
+  qBdata.forEach(q=>{if(ans[q.n])scB+=ans[q.n];});
+  const scTot=scA+scB;
+  const sg=getSxGroup();
+  const risk=getRisk(scTot,sg);
+  const sgLabel=["ไม่มีอาการ","กลุ่มที่ 1","กลุ่มที่ 2","กลุ่มที่ 3"][sg];
+
+  // อาการแต่ละกลุ่ม
+  const sx1=[...document.querySelectorAll('#sx1 input:checked')].map(x=>x.value);
+  const sx2=[...document.querySelectorAll('#sx2 input:checked')].map(x=>x.value);
+  const sx3=[...document.querySelectorAll('#sx3 input:checked')].map(x=>x.value);
+
+  // สารเคมี 5 รายการ
+  const chems=[1,2,3,4,5].map(i=>getChemRow(i));
+
+  // คำตอบรายข้อ 9-23
+  const qAns={};
+  [...qAdata,...qBdata].forEach(q=>{qAns[`q${q.n}`]=ans[q.n]||'';});
+
+  return{
+    survey_date:   getVal('f-date'),
+    id_card:       getVal('f-id').replace(/\D/g,''),
+    id_card_formatted: getVal('f-id'),
+    prefix:        getVal('f-prefix'),
+    fullname:      getVal('f-name'),
+    gender:        getRadio('sex'),
+    age:           getVal('f-age'),
+    address:       getVal('f-addr'),
+    tambon:        getVal('f-tambon'),
+    amphoe:        'บ้านแพ้ว',
+    province:      'สมุทรสาคร',
+    road:          getVal('f-addr2'),
+    occupation:    getRadio('job'),
+    crop_type:     getVal('f-crop-detail'),
+    involvement:   getChecks('involve-chk'),
+    hospital:      getVal('f-hosp'),
+    interviewer:   getVal('f-inter'),
+    interviewer_pos: getVal('f-pos'),
+    score_a:       scA,
+    score_b:       scB,
+    score_total:   scTot,
+    symptom_group: sgLabel,
+    risk_level:    risk,
+    symptoms_g1:   sx1,
+    symptoms_g2:   sx2,
+    symptoms_g3:   sx3,
+    disease:       getChecks('disease-chk'),
+    med_pyridostigmine: getRadio('med'),
+    last_exposure: getRadio('last'),
+    days_per_month:getRadio('days'),
+    chem_purpose:  getChecks('purpose-chk'),
+    chem1_trade:   chems[0].trade, chem1_common: chems[0].common,
+    chem2_trade:   chems[1].trade, chem2_common: chems[1].common,
+    chem3_trade:   chems[2].trade, chem3_common: chems[2].common,
+    chem4_trade:   chems[3].trade, chem4_common: chems[3].common,
+    chem5_trade:   chems[4].trade, chem5_common: chems[4].common,
+    blood_result:  getRadio('blood'),
+    ...qAns
+  };
+}
+
+/* ── ส่งข้อมูลไป Google Sheet ── */
+async function sendToSheet(payload){
+  if(!GAS_URL||GAS_URL.includes('YOUR_APPS')){
+    console.warn('ยังไม่ได้ตั้ง GAS_URL — บันทึกเฉพาะในเครื่อง');
+    return{ok:false,offline:true};
+  }
+  try{
+    const res=await fetch(GAS_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(payload)
+    });
+    const json=await res.json();
+    return{ok:json.status==='ok'};
+  }catch(e){
+    return{ok:false,offline:true};
+  }
+}
+
+/* ── Offline queue — เก็บรอส่งเมื่อออนไลน์ ── */
+function queueOffline(payload){
+  try{
+    const q=JSON.parse(localStorage.getItem('nbk156_queue')||'[]');
+    q.push(payload);
+    localStorage.setItem('nbk156_queue',JSON.stringify(q));
+  }catch(e){}
+}
+
+async function flushQueue(){
+  if(!navigator.onLine)return;
+  try{
+    const q=JSON.parse(localStorage.getItem('nbk156_queue')||'[]');
+    if(!q.length)return;
+    const sent=[];
+    for(const p of q){
+      const r=await sendToSheet(p);
+      if(r.ok)sent.push(p);
+    }
+    if(sent.length){
+      const remain=q.filter(p=>!sent.includes(p));
+      localStorage.setItem('nbk156_queue',JSON.stringify(remain));
+      if(sent.length>0)showToast(`✅ ส่งข้อมูลค้างไว้ ${sent.length} รายการสำเร็จ`);
+    }
+  }catch(e){}
+}
+
+/* ── Toast notification ── */
+function showToast(msg,type='success'){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';
+    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:20px;font-size:13px;font-family:Sarabun,sans-serif;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:opacity .3s;white-space:nowrap';
+    document.body.appendChild(t);}
+  t.textContent=msg;
+  t.style.background=type==='error'?'#993C1D':'#0F6E56';
+  t.style.color='#fff';t.style.opacity='1';
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.style.opacity='0',3500);
+}
+
+/* ── SUBMIT ── */
+async function submitForm(){
+  const btn=document.querySelector('.btn-submit');
+  btn.disabled=true;
+  btn.textContent='⏳ กำลังบันทึก...';
+
+  const payload=collectFormData();
+  const name=payload.fullname||'ไม่ระบุชื่อ';
+  const id=payload.id_card||'—';
+  const idFmt=id.replace(/(\d{1})(\d{4})(\d{5})(\d{2})(\d{1})/,'$1-$2-$3-$4-$5');
+
+  let statusMsg='';
+
+  if(navigator.onLine&&!GAS_URL.includes('YOUR_APPS')){
+    const result=await sendToSheet(payload);
+    if(result.ok){
+      statusMsg=`<span style="color:var(--g)">✅ บันทึกลง Google Sheet สำเร็จ</span>`;
+    } else {
+      queueOffline(payload);
+      statusMsg=`<span style="color:var(--a)">⚠️ ไม่สามารถเชื่อมต่อได้ — บันทึกในเครื่องแล้ว จะส่งอัตโนมัติเมื่อออนไลน์</span>`;
+    }
+  } else if(!navigator.onLine){
+    queueOffline(payload);
+    statusMsg=`<span style="color:var(--a)">📥 ออฟไลน์ — บันทึกในเครื่องแล้ว จะส่งอัตโนมัติเมื่อออนไลน์</span>`;
+  } else {
+    // GAS_URL ยังไม่ได้ตั้ง
+    statusMsg=`<span style="color:var(--muted)">💾 บันทึกในเครื่องเรียบร้อย (ยังไม่ได้ตั้งค่า Google Sheet)</span>`;
+  }
+
+  // แสดงหน้าสำเร็จ
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('success-screen').classList.add('show');
+  document.getElementById('success-name').innerHTML=
+    `บันทึกข้อมูล <strong>${name}</strong><br>
+     <small style="color:var(--muted)">บัตรประชาชน: ${idFmt}</small><br>
+     <small style="color:var(--muted)">เวลา: ${new Date().toLocaleString('th-TH')}</small><br>
+     <div style="margin-top:8px;font-size:13px">${statusMsg}</div>`;
+
+  btn.disabled=false;
+  btn.textContent='✅ บันทึกและส่งข้อมูล';
+  clearDraft();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ส่งข้อมูลค้างเมื่อกลับมาออนไลน์
+window.addEventListener('online',()=>{updateConnStatus();flushQueue();});
+
+function resetForm(){
+  location.reload();
+}
+
+function printForm(){window.print();}
+
+/* ── AUTO SAVE (100% Data Fidelity) ── */
+function autoSave(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    try{
+      const getVal=id=>document.getElementById(id)?.value||'';
+      const getRadio=name=>{const r=document.querySelector(`input[name="${name}"]:checked`);return r?r.value:''};
+      const getChecks=id=>[...document.querySelectorAll(`#${id} input:checked`)].map(x=>x.value);
+      const getChems=()=>{
+        const rows=[];
+        for(let i=1;i<=5;i++){
+          const cells=document.querySelectorAll(`.chem-table tr:nth-child(${i+1}) input`);
+          rows.push({trade:cells[0]?.value||'',common:cells[1]?.value||''});
+        }
+        return rows;
+      };
+
+      const draft={
+        id:getVal('f-id'),
+        prefix:getVal('f-prefix'),
+        name:getVal('f-name'),
+        sex:getRadio('sex'),
+        age:getVal('f-age'),
+        addr:getVal('f-addr'),
+        tambon:getVal('f-tambon'),
+        addr2:getVal('f-addr2'),
+        job:getRadio('job'),
+        crop:getRadio('crop'),
+        crop_detail:getVal('f-crop-detail'),
+        involve:getChecks('involve-chk'),
+        hosp:getVal('f-hosp'),
+        date:getVal('f-date'),
+        inter:getVal('f-inter'),
+        pos:getVal('f-pos'),
+        ans:JSON.stringify(ans),
+        sx1:getChecks('sx1'),
+        sx2:getChecks('sx2'),
+        sx3:getChecks('sx3'),
+        disease:getChecks('disease-chk'),
+        med:getRadio('med'),
+        last:getRadio('last'),
+        days:getRadio('days'),
+        purpose:getChecks('purpose-chk'),
+        chems:getChems(),
+        blood:getRadio('blood'),
+        ts:Date.now()
+      };
+      localStorage.setItem('nbk156_draft',JSON.stringify(draft));
+    }catch(e){console.error('autoSave error',e);}
+  },500);
+}
+
+function loadDraft(){
+  try{
+    const d=JSON.parse(localStorage.getItem('nbk156_draft')||'{}');
+    if(!d.id && !d.name) return;
+
+    const setVal=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined)el.value=v;};
+    const setRadio=(name,v)=>{
+      if(!v)return;
+      const r=document.querySelector(`input[name="${name}"][value="${v}"]`);
+      if(r){
+        r.checked=true;
+        const p=r.closest('.pill');
+        if(p){
+          p.closest('.pill-group')?.querySelectorAll('.pill').forEach(x=>x.classList.remove('sel'));
+          p.classList.add('sel');
+        }
+      }
+    };
+    const setChecks=(containerId,values)=>{
+      if(!values||!Array.isArray(values))return;
+      const cont=document.getElementById(containerId);
+      if(!cont)return;
+      cont.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
+        const match=values.includes(cb.value);
+        cb.checked=match;
+        const p=cb.closest('.pill')||cb.closest('.sx-item');
+        if(p){
+          p.classList.toggle('sel',match);
+          p.classList.toggle('chk',match);
+          const box=p.querySelector('.chkbox');
+          if(box)box.innerHTML=match?'✓':'';
+        }
+      });
+    };
+
+    // ส่วนที่ 1
+    setVal('f-id',d.id);
+    if(d.id){const el=document.getElementById('f-id');handleIdInput(el);}
+    setVal('f-prefix',d.prefix||'นาย');
+    setVal('f-name',d.name);
+    setRadio('sex',d.sex);
+    setVal('f-age',d.age);
+    setVal('f-addr',d.addr);
+    setVal('f-tambon',d.tambon);
+    setVal('f-addr2',d.addr2);
+    setRadio('job',d.job);
+    setRadio('crop',d.crop);
+    setVal('f-crop-detail',d.crop_detail);
+    setChecks('involve-chk',d.involve);
+    setVal('f-hosp',d.hosp);
+    setVal('f-date',d.date);
+    setVal('f-inter',d.inter);
+    setVal('f-pos',d.pos);
+
+    // ส่วนที่ 2
+    const savedAns=JSON.parse(d.ans||'{}');
+    Object.entries(savedAns).forEach(([k,v])=>{
+      const qNum=parseInt(k);
+      ans[qNum]=v;
+      const r=document.querySelector(`input[name="q${qNum}"][value="${v}"]`);
+      if(r){
+        const row=r.closest('.opts');
+        if(row){
+          row.querySelectorAll('.opt').forEach(x=>x.className='opt');
+          const isB=qNum>=18;
+          let colCls='s2';
+          if(!isB){
+            colCls=v===1?'s1':v===2?'s2':'s3';
+          }else{
+            colCls=v===3?'s3':v===2?'s2':'s1';
+          }
+          const lbl=r.closest('.opt');
+          if(lbl)lbl.className=`opt ${colCls}`;
+        }
+        r.closest('.q-card')?.classList.add('answered');
+      }
+    });
+    updateScore();
+
+    // ส่วนที่ 3
+    setChecks('sx1',d.sx1);
+    setChecks('sx2',d.sx2);
+    setChecks('sx3',d.sx3);
+    const hasD=document.querySelectorAll('#sx3 input:checked').length>0;
+    const alertEl=document.getElementById('sx3-alert');
+    if(alertEl)alertEl.style.display=hasD?'block':'none';
+
+    // ส่วนที่ 5
+    setChecks('disease-chk',d.disease);
+    setRadio('med',d.med);
+    setRadio('last',d.last);
+    setRadio('days',d.days);
+    setChecks('purpose-chk',d.purpose);
+
+    // ตารางสารเคมี
+    if(d.chems&&Array.isArray(d.chems)){
+      d.chems.forEach((row,idx)=>{
+        const cells=document.querySelectorAll(`.chem-table tr:nth-child(${idx+2}) input`);
+        if(cells[0])cells[0].value=row.trade||'';
+        if(cells[1])cells[1].value=row.common||'';
+      });
+    }
+
+    // ผลตรวจเลือด
+    if(d.blood){
+      setRadio('blood',d.blood);
+      showBloodResult(d.blood);
+    }
+
+    document.getElementById('draft-banner').style.display='none';
+    showToast('✅ กู้คืนข้อมูลฉบับร่างครบถ้วนแล้ว');
+  }catch(e){console.error('loadDraft error',e);}
+}
+
+function clearDraft(){
+  try{localStorage.removeItem('nbk156_draft');}catch(e){}
+  document.getElementById('draft-banner').style.display='none';
+}
+
+/* ── CONNECTIVITY ── */
+function updateConnStatus(){
+  const online=navigator.onLine;
+  document.getElementById('conn-dot').style.background=online?'#4ade80':'#f87171';
+  document.getElementById('conn-txt').textContent=online?'ออนไลน์':'ออฟไลน์';
+  document.getElementById('offline-notice').classList.toggle('show',!online);
+}
+window.addEventListener('offline',updateConnStatus);
+updateConnStatus();
+
+/* ── PILL init ── */
+function initPills(wrap){
+  wrap.querySelectorAll('.pill').forEach(lbl=>{
+    const inp=lbl.querySelector('input');
+    if(!inp)return;
+    if(inp.type==='radio'){
+      inp.onchange=()=>{
+        wrap.querySelectorAll('.pill').forEach(x=>x.classList.remove('sel'));
+        lbl.classList.add('sel');
+        autoSave();
+      };
+    } else {
+      inp.onchange=()=>{lbl.classList.toggle('sel',inp.checked);autoSave();};
+    }
+  });
+}
+
+/* ── INIT ── */
+buildQ(qAdata,false,'qA-wrap');
+buildQ(qBdata,true,'qB-wrap');
+buildSx(sx1d,'sx1',false);
+buildSx(sx2d,'sx2',false);
+buildSx(sx3d,'sx3',true);
+
+document.querySelectorAll('.pill-group,[id$="-chk"]').forEach(g=>initPills(g));
+
+const now=new Date();
+const fd=document.getElementById('f-date');
+fd.value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+
+// Check draft
+try{
+  const d=JSON.parse(localStorage.getItem('nbk156_draft')||'{}');
+  if(d.id&&d.ts&&(Date.now()-d.ts)<86400000*2){
+    document.getElementById('draft-banner').style.display='flex';
+  }
+}catch(e){}
+</script>
+</body>
+</html>
