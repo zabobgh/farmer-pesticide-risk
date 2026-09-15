@@ -18,14 +18,17 @@
   </div>
 </template>
 
-<script setup>
-defineProps({
-  name: String,
-  id: String,
-  submitTime: String,
-  syncStatus: String
-})
-defineEmits(['reset'])
+<script setup lang="ts">
+defineProps<{
+  name?: string
+  id?: string
+  submitTime?: string
+  syncStatus?: string
+}>()
+
+defineEmits<{
+  (e: 'reset'): void
+}>()
 
 const printForm = () => window.print()
 </script>

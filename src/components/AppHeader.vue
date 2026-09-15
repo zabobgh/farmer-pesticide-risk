@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="app-header">
     <div class="hd-top">
       <div>
@@ -19,11 +19,14 @@
   </div>
 </template>
 
-<script setup>
-defineProps({
-  isOnline: Boolean,
-  answeredCount: { type: Number, default: 0 },
-  percent: { type: Number, default: 0 }
+<script setup lang="ts">
+withDefaults(defineProps<{
+  isOnline: boolean
+  answeredCount?: number
+  percent?: number
+}>(), {
+  answeredCount: 0,
+  percent: 0
 })
 </script>
 

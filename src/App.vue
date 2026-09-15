@@ -80,8 +80,8 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed, reactive } from 'vue'
+<script setup lang="ts">
+import { ref, computed, reactive, watch } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import StepNav from './components/StepNav.vue'
 import DraftBanner from './components/DraftBanner.vue'
@@ -93,16 +93,21 @@ import SectionResult from './components/SectionResult.vue'
 import SectionBlood from './components/SectionBlood.vue'
 import SuccessScreen from './components/SuccessScreen.vue'
 
-import { useFormData } from './composables/useFormData.js'
-import { useSync } from './composables/useSync.js'
-import { validateThaiCitizenId } from './composables/useThaiId.js'
-import { qAdata, qBdata, calculateRisk } from './composables/useRiskMatrix.js'
+import { useFormData } from './composables/useFormData'
+import { useSync } from './composables/useSync'
+import { validateThaiCitizenId } from './composables/useThaiId'
+import { qAdata, qBdata, calculateRisk } from './composables/useRiskMatrix'
 
 const { form, hasDraft, draftInfo, loadDraft, clearDraft } = useFormData()
 const { isOnline, sendPayload } = useSync()
 
-const currentStep = ref(0)
-const isSubmitted = ref(false)
+const currentStep = ref<number>(0)
+const isSubmitted = ref<boolean>(false)
+
+// Smooth scroll to top on every step change (Next, Back, StepNav, Review links)
+watch(currentStep, () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+})
 
 const submittedData = reactive({
   name: '',
@@ -111,25 +116,29 @@ const submittedData = reactive({
   status: ''
 })
 
-const toast = reactive({
+const toast = reactive<{
+  visible: boolean
+  message: string
+  type: 'success' | 'error'
+}>({
   visible: false,
   message: '',
   type: 'success'
 })
 
-let toastTimer = null
-const showToast = (msg, type = 'success') => {
+let toastTimer: ReturnType<typeof setTimeout> | null = null
+const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
   toast.message = msg
   toast.type = type
   toast.visible = true
-  clearTimeout(toastTimer)
+  if (toastTimer) clearTimeout(toastTimer)
   toastTimer = setTimeout(() => { toast.visible = false }, 3500)
 }
 
 const answeredCount = computed(() => Object.keys(form.answers).length)
 const progressPercent = computed(() => Math.round((answeredCount.value / 15) * 100))
 
-const checkCanAccess = (targetStep) => {
+const checkCanAccess = (targetStep: number): boolean => {
   if (targetStep === 0) return true
   const idRaw = (form.id_card || '').replace(/\D/g, '')
   if (!idRaw || idRaw.length < 13 || !form.fullname || !form.hospital) {
@@ -150,16 +159,14 @@ const checkCanAccess = (targetStep) => {
   return true
 }
 
-const onStepClick = (stepIndex) => {
+const onStepClick = (stepIndex: number) => {
   if (checkCanAccess(stepIndex)) {
     currentStep.value = stepIndex
-    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 }
 
-const goToStep = (stepIndex) => {
+const goToStep = (stepIndex: number) => {
   currentStep.value = stepIndex
-  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 const onRestoreDraft = () => {
@@ -181,7 +188,7 @@ const buildPayload = () => {
 
   const { risk } = calculateRisk(scTot, sg)
 
-  const qAns = {}
+  const qAns: Record<string, any> = {}
   for (let i = 9; i <= 23; i++) {
     qAns['q' + i] = form.answers[i] !== undefined ? form.answers[i] : '-'
   }

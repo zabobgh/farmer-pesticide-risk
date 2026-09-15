@@ -71,40 +71,41 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from 'vue'
-import { qAdata, qBdata } from '../composables/useRiskMatrix.js'
+import type { FormData, OptionItem } from '../types/form'
+import { qAdata, qBdata } from '../composables/useRiskMatrix'
 
-const props = defineProps({ form: Object })
-const emit = defineEmits(['back', 'next'])
+const props = defineProps<{ form: FormData }>()
+const emit = defineEmits<{ (e: 'back'): void; (e: 'next'): void }>()
 
-const errorMsg = ref('')
+const errorMsg = ref<string>('')
 
-const optsA = [
+const optsA: OptionItem[] = [
   { l: 'ไม่ใช่', v: 1, c: 's1' },
   { l: 'เป็นบางครั้ง', v: 2, c: 's2' },
   { l: 'ทุกครั้ง', v: 3, c: 's3' }
 ]
 
-const optsB = [
+const optsB: OptionItem[] = [
   { l: 'ไม่ใช่', v: 3, c: 's3' },
   { l: 'เป็นบางครั้ง', v: 2, c: 's2' },
   { l: 'ทุกครั้ง', v: 1, c: 's1' }
 ]
 
-const selectAnswer = (qNum, val) => {
+const selectAnswer = (qNum: number, val: number) => {
   props.form.answers[qNum] = val
 }
 
-const scoreA = computed(() => {
+const scoreA = computed<number>(() => {
   return qAdata.reduce((acc, q) => acc + (props.form.answers[q.n] || 0), 0)
 })
 
-const scoreB = computed(() => {
+const scoreB = computed<number>(() => {
   return qBdata.reduce((acc, q) => acc + (props.form.answers[q.n] || 0), 0)
 })
 
-const totalScore = computed(() => scoreA.value + scoreB.value)
+const totalScore = computed<number>(() => scoreA.value + scoreB.value)
 
 const onNext = () => {
   const answeredCount = Object.keys(props.form.answers).length

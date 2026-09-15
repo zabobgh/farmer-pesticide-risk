@@ -150,20 +150,22 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from 'vue'
-import { formatThaiId, validateThaiCitizenId } from '../composables/useThaiId.js'
+import type { FormData } from '../types/form'
+import { formatThaiId, validateThaiCitizenId } from '../composables/useThaiId'
 
-const props = defineProps({ form: Object })
-const emit = defineEmits(['next'])
+const props = defineProps<{ form: FormData }>()
+const emit = defineEmits<{ (e: 'next'): void }>()
 
-const errorMsg = ref('')
+const errorMsg = ref<string>('')
 
 const idRaw = computed(() => (props.form.id_card || '').replace(/\D/g, ''))
 const isIdValid = computed(() => validateThaiCitizenId(idRaw.value))
 
-const onIdInput = (e) => {
-  props.form.id_card = formatThaiId(e.target.value)
+const onIdInput = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  props.form.id_card = formatThaiId(target.value)
 }
 
 const onPrefixChange = () => {
@@ -188,10 +190,10 @@ const onNext = () => {
   emit('next')
 }
 
-const tambons = ['หลักสาม', 'ทุ่งอินทรีย์', 'โคกงูเห่า', 'บ้านแพ้ว', 'หนองสองห้อง', 'โรงเข้', 'บ้านดอนสะแก', 'บ้านกลางนา', 'บ้านดอนโฆ', 'หลักสอง', 'เจ็ดริ้ว', 'คลองตัน', 'สวนส้ม', 'เกษตรพัฒนา']
-const jobs = ['เพาะปลูก (ทำเอง)', 'เพาะปลูก (รับจ้าง)', 'รับจ้างฉีดพ่น', 'รับจ้างอื่นๆ']
-const involvements = ['เป็นผู้ผสมสารเคมี', 'เป็นผู้ฉีดพ่นเอง', 'อยู่ในบริเวณที่ฉีดพ่น', 'รับจ้างฉีดพ่น', 'สัมผัสผักผลไม้ที่ฉีดพ่น']
-const hospitals = ['รพ.สต.หลักสาม', 'รพ.สต.ทุ่งอินทรีย์', 'รพ.สต.โคกงูเห่า', 'รพ.สต.บ้านทำนบแพ้ว', 'รพ.สต.โรงเข้', 'รพ.สต.บ้านดอนสะแก', 'รพ.สต.บ้านกลางนา', 'รพ.สต.หนองสองห้อง', 'รพ.สต.บ้านกลางคลองสองห้อง', 'รพ.สต.บ้านดอนโฆ', 'รพ.สต.หลักสอง', 'รพ.สต.บ้านรางช้างสี', 'รพ.สต.เจ็ดริ้ว', 'รพ.สต.คลองตัน', 'รพ.สต.บ้านช่องสาร', 'รพ.สต.บ้านท่าแร้ง', 'รพ.สต.สวนส้ม', 'รพ.สต.บ้านคลองตัน', 'รพ.สต.เกษตรพัฒนา', 'รพ.บ้านแพ้ว']
+const tambons: string[] = ['หลักสาม', 'ทุ่งอินทรีย์', 'โคกงูเห่า', 'บ้านแพ้ว', 'หนองสองห้อง', 'โรงเข้', 'บ้านดอนสะแก', 'บ้านกลางนา', 'บ้านดอนโฆ', 'หลักสอง', 'เจ็ดริ้ว', 'คลองตัน', 'สวนส้ม', 'เกษตรพัฒนา']
+const jobs: string[] = ['เพาะปลูก (ทำเอง)', 'เพาะปลูก (รับจ้าง)', 'รับจ้างฉีดพ่น', 'รับจ้างอื่นๆ']
+const involvements: string[] = ['เป็นผู้ผสมสารเคมี', 'เป็นผู้ฉีดพ่นเอง', 'อยู่ในบริเวณที่ฉีดพ่น', 'รับจ้างฉีดพ่น', 'สัมผัสผักผลไม้ที่ฉีดพ่น']
+const hospitals: string[] = ['รพ.สต.หลักสาม', 'รพ.สต.ทุ่งอินทรีย์', 'รพ.สต.โคกงูเห่า', 'รพ.สต.บ้านทำนบแพ้ว', 'รพ.สต.โรงเข้', 'รพ.สต.บ้านดอนสะแก', 'รพ.สต.บ้านกลางนา', 'รพ.สต.หนองสองห้อง', 'รพ.สต.บ้านกลางคลองสองห้อง', 'รพ.สต.บ้านดอนโฆ', 'รพ.สต.หลักสอง', 'รพ.สต.บ้านรางช้างสี', 'รพ.สต.เจ็ดริ้ว', 'รพ.สต.คลองตัน', 'รพ.สต.บ้านช่องสาร', 'รพ.สต.บ้านท่าแร้ง', 'รพ.สต.สวนส้ม', 'รพ.สต.บ้านคลองตัน', 'รพ.สต.เกษตรพัฒนา', 'รพ.บ้านแพ้ว']
 </script>
 
 <style scoped>

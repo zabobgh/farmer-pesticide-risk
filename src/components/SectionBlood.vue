@@ -22,7 +22,7 @@
           class="pill"
           :class="{ sel: form.disease.includes(d) }"
         >
-          <input type="checkbox" :value="d" @change="onDiseaseChange(d, $event.target.checked)">
+          <input type="checkbox" :value="d" @change="handleDiseaseToggle(d, $event)">
           {{ d === 'ไม่มี' ? 'ไม่มี' : 'โรค' + d }}
         </label>
       </div>
@@ -105,15 +105,19 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
+import type { FormData } from '../types/form'
 
-const props = defineProps({ form: Object })
-defineEmits(['back', 'submit'])
+const props = defineProps<{ form: FormData }>()
+defineEmits<{
+  (e: 'back'): void
+  (e: 'submit'): void
+}>()
 
-const diseases = ['เบาหวาน', 'ไต', 'ตับ', 'ขาดสารอาหาร', 'พิษสุราเรื้อรัง', 'ไม่มี']
+const diseases: string[] = ['เบาหวาน', 'ไต', 'ตับ', 'ขาดสารอาหาร', 'พิษสุราเรื้อรัง', 'ไม่มี']
 
-const onDiseaseChange = (disease, isChecked) => {
+const onDiseaseChange = (disease: string, isChecked: boolean) => {
   if (disease === 'ไม่มี' && isChecked) {
     props.form.disease = ['ไม่มี']
   } else if (disease !== 'ไม่มี' && isChecked) {
@@ -122,6 +126,11 @@ const onDiseaseChange = (disease, isChecked) => {
   } else {
     props.form.disease = props.form.disease.filter(d => d !== disease)
   }
+}
+
+const handleDiseaseToggle = (disease: string, e: Event) => {
+  const target = e.target as HTMLInputElement
+  onDiseaseChange(disease, target.checked)
 }
 
 const lastExposures = [
@@ -143,14 +152,19 @@ const bloodOptions = [
   { val: 'ไม่ปลอดภัย', label: '4. ไม่ปลอดภัย' }
 ]
 
-const bloodMap = {
+interface BloodTagInfo {
+  cls: string
+  msg: string
+}
+
+const bloodMap: Record<string, BloodTagInfo> = {
   'ปกติ': { cls: 'bt-normal', msg: 'ผลปกติ — ระดับเอ็นไซม์อยู่ในเกณฑ์ปกติ' },
   'ปลอดภัย': { cls: 'bt-safe', msg: 'ปลอดภัย — ระดับเอ็นไซม์อยู่ในระดับที่ยอมรับได้' },
   'มีความเสี่ยง': { cls: 'bt-risk', msg: '⚠️ มีความเสี่ยง — ควรติดตามและลดการสัมผัสสารเคมี' },
   'ไม่ปลอดภัย': { cls: 'bt-unsafe', msg: '🚨 ไม่ปลอดภัย — ต้องหยุดสัมผัสสารเคมีและพบแพทย์ทันที' }
 }
 
-const bloodTag = computed(() => bloodMap[props.form.blood_result] || null)
+const bloodTag = computed<BloodTagInfo | null>(() => bloodMap[props.form.blood_result] || null)
 </script>
 
 <style scoped>

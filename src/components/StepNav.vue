@@ -16,13 +16,23 @@
   </div>
 </template>
 
-<script setup>
-defineProps({
-  currentStep: { type: Number, default: 0 }
+<script setup lang="ts">
+withDefaults(defineProps<{
+  currentStep?: number
+}>(), {
+  currentStep: 0
 })
-defineEmits(['change-step'])
 
-const steps = [
+defineEmits<{
+  (e: 'change-step', idx: number): void
+}>()
+
+interface StepItem {
+  num: string
+  label: string
+}
+
+const steps: StepItem[] = [
   { num: '①', label: 'ข้อมูลทั่วไป' },
   { num: '②', label: 'การใช้สารเคมี' },
   { num: '③', label: 'อาการผิดปกติ' },

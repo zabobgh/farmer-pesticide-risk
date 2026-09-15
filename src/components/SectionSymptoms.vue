@@ -75,14 +75,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
-import { sx1d, sx2d, sx3d } from '../composables/useRiskMatrix.js'
+import type { FormData } from '../types/form'
+import { sx1d, sx2d, sx3d } from '../composables/useRiskMatrix'
 
-const props = defineProps({ form: Object })
-defineEmits(['back', 'next'])
+const props = defineProps<{ form: FormData }>()
+defineEmits<{ (e: 'back'): void; (e: 'next'): void }>()
 
-const hasNoSymptoms = computed(() => {
+const hasNoSymptoms = computed<boolean>(() => {
   return props.form.symptoms_g1.length === 0 &&
          props.form.symptoms_g2.length === 0 &&
          props.form.symptoms_g3.length === 0

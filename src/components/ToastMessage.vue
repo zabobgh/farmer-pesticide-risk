@@ -1,14 +1,16 @@
-﻿<template>
+<template>
   <div v-if="visible" class="toast-box" :class="type">
     {{ message }}
   </div>
 </template>
 
-<script setup>
-defineProps({
-  visible: Boolean,
-  message: String,
-  type: { type: String, default: 'success' }
+<script setup lang="ts">
+withDefaults(defineProps<{
+  visible: boolean
+  message: string
+  type?: 'success' | 'error'
+}>(), {
+  type: 'success'
 })
 </script>
 

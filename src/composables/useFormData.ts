@@ -1,9 +1,10 @@
-import { reactive, watch, ref } from 'vue'
+import { reactive, watch, ref, type Ref } from 'vue'
+import type { FormData, DraftInfo } from '../types/form'
 
 const DRAFT_KEY = 'nbk156_draft'
 
 export function useFormData() {
-  const form = reactive({
+  const form = reactive<FormData>({
     id_card: '',
     prefix: 'นาย',
     fullname: '',
@@ -47,8 +48,8 @@ export function useFormData() {
     blood_result: ''
   })
 
-  const hasDraft = ref(false)
-  const draftInfo = ref(null)
+  const hasDraft = ref<boolean>(false)
+  const draftInfo = ref<DraftInfo | null>(null)
 
   // ตรวจสอบ Draft
   try {
@@ -65,7 +66,7 @@ export function useFormData() {
     }
   } catch (e) {}
 
-  const syncGender = (prefix) => {
+  const syncGender = (prefix: string) => {
     if (prefix === 'นาย') form.gender = 'ชาย'
     else if (prefix === 'นาง' || prefix === 'นางสาว') form.gender = 'หญิง'
   }
@@ -75,7 +76,7 @@ export function useFormData() {
     syncGender(newVal)
   }, { immediate: true })
 
-  const loadDraft = () => {
+  const loadDraft = (): boolean => {
     try {
       const raw = localStorage.getItem(DRAFT_KEY)
       if (raw) {
@@ -97,9 +98,9 @@ export function useFormData() {
   }
 
   // Auto-save debounce
-  let timer = null
+  let timer: ReturnType<typeof setTimeout> | null = null
   watch(form, () => {
-    clearTimeout(timer)
+    if (timer) clearTimeout(timer)
     timer = setTimeout(() => {
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...form, ts: Date.now() }))

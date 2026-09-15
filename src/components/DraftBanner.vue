@@ -11,12 +11,18 @@
   </div>
 </template>
 
-<script setup>
-defineProps({
-  show: Boolean,
-  draftInfo: Object
-})
-defineEmits(['restore', 'clear'])
+<script setup lang="ts">
+import type { DraftInfo } from '../types/form'
+
+defineProps<{
+  show: boolean
+  draftInfo?: DraftInfo | null
+}>()
+
+defineEmits<{
+  (e: 'restore'): void
+  (e: 'clear'): void
+}>()
 </script>
 
 <style scoped>

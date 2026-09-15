@@ -67,33 +67,37 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
-import { qAdata, qBdata, calculateRisk } from '../composables/useRiskMatrix.js'
+import type { FormData, RiskResult } from '../types/form'
+import { qAdata, qBdata, calculateRisk } from '../composables/useRiskMatrix'
 
-const props = defineProps({ form: Object })
-defineEmits(['go-step', 'submit'])
+const props = defineProps<{ form: FormData }>()
+defineEmits<{
+  (e: 'go-step', step: number): void
+  (e: 'submit'): void
+}>()
 
-const scoreA = computed(() => qAdata.reduce((acc, q) => acc + (props.form.answers[q.n] || 0), 0))
-const scoreB = computed(() => qBdata.reduce((acc, q) => acc + (props.form.answers[q.n] || 0), 0))
-const totalScore = computed(() => scoreA.value + scoreB.value)
+const scoreA = computed<number>(() => qAdata.reduce((acc, q) => acc + (props.form.answers[q.n] || 0), 0))
+const scoreB = computed<number>(() => qBdata.reduce((acc, q) => acc + (props.form.answers[q.n] || 0), 0))
+const totalScore = computed<number>(() => scoreA.value + scoreB.value)
 
-const symptomGroup = computed(() => {
+const symptomGroup = computed<number>(() => {
   if (props.form.symptoms_g3.length > 0) return 3
   if (props.form.symptoms_g2.length > 0) return 2
   if (props.form.symptoms_g1.length > 0) return 1
   return 0
 })
 
-const symptomGroupLabel = computed(() => {
+const symptomGroupLabel = computed<string>(() => {
   return ['ไม่มีอาการ', 'กลุ่มที่ 1', 'กลุ่มที่ 2', 'กลุ่มที่ 3'][symptomGroup.value]
 })
 
-const scoreRange = computed(() => {
+const scoreRange = computed<string>(() => {
   return totalScore.value <= 24 ? '15–24' : totalScore.value <= 30 ? '25–30' : '31–45'
 })
 
-const riskResult = computed(() => calculateRisk(totalScore.value, symptomGroup.value))
+const riskResult = computed<RiskResult>(() => calculateRisk(totalScore.value, symptomGroup.value))
 </script>
 
 <style scoped>
