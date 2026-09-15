@@ -1,10 +1,21 @@
-﻿<template>
+<template>
   <div class="section-container">
     <div class="sec-header">
       <div class="sec-icon">🩺</div>
       <div>
         <div class="sec-title">ส่วนที่ 3 — อาการผิดปกติใน 1 เดือนที่ผ่านมา</div>
         <div class="sec-sub">ทำเครื่องหมายที่อาการที่มีหลังสัมผัสสารเคมี</div>
+      </div>
+    </div>
+
+    <!-- Quick action: No Symptoms -->
+    <div class="no-sx-banner" :class="{ active: hasNoSymptoms }" @click="setNoSymptoms">
+      <div class="no-sx-radio">
+        <span class="no-sx-dot" v-if="hasNoSymptoms">✓</span>
+      </div>
+      <div class="no-sx-text">
+        <strong>ไม่มีอาการผิดปกติใดๆ ในช่วง 1 เดือนที่ผ่านมา</strong>
+        <div class="no-sx-sub">คลิกที่นี่หากไม่มีอาการผิดปกติ ระบบจะเคลียร์ตัวเลือกด้านล่างทั้งหมด</div>
       </div>
     </div>
 
@@ -58,17 +69,30 @@
     </div>
 
     <div class="nav-row">
-      <button class="btn-back" @click="('back')">← ย้อนกลับ</button>
-      <button class="btn-next" @click="('next')">ดูผลประเมิน →</button>
+      <button class="btn-back" @click="$emit('back')">← ย้อนกลับ</button>
+      <button class="btn-next" @click="$emit('next')">ดูผลประเมิน →</button>
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { sx1d, sx2d, sx3d } from '../composables/useRiskMatrix.js'
 
-defineProps({ form: Object })
+const props = defineProps({ form: Object })
 defineEmits(['back', 'next'])
+
+const hasNoSymptoms = computed(() => {
+  return props.form.symptoms_g1.length === 0 &&
+         props.form.symptoms_g2.length === 0 &&
+         props.form.symptoms_g3.length === 0
+})
+
+const setNoSymptoms = () => {
+  props.form.symptoms_g1 = []
+  props.form.symptoms_g2 = []
+  props.form.symptoms_g3 = []
+}
 </script>
 
 <style scoped>
@@ -77,12 +101,28 @@ defineEmits(['back', 'next'])
 .sec-title { font-size: 16px; font-weight: 700; color: var(--g2); }
 .sec-sub { font-size: 13px; color: var(--muted); }
 
+.no-sx-banner {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius);
+  margin-bottom: 14px; cursor: pointer; transition: all .15s; user-select: none;
+}
+.no-sx-banner:hover { border-color: var(--g); background: #f7fffe; }
+.no-sx-banner.active { background: var(--g3); border-color: var(--g); box-shadow: 0 0 0 3px rgba(21, 128, 93, .12); }
+.no-sx-radio {
+  width: 24px; height: 24px; border: 2px solid var(--g4); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #fff;
+}
+.no-sx-banner.active .no-sx-radio { background: var(--g); border-color: var(--g); }
+.no-sx-dot { color: #fff; font-size: 14px; font-weight: 700; }
+.no-sx-text strong { font-size: 14px; color: var(--g2); display: block; line-height: 1.3; }
+.no-sx-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
 .sx-section-label {
   font-size: 13.5px; font-weight: 700; color: var(--g2); margin: 16px 0 8px;
-  padding: 8px 12px; background: var(--g3); border-radius: 6px; border-left: 4px solid var(--g);
+  padding: 8px 12px; background: var(--g3); border-radius: 6px;
 }
 .sx-section-label.group3 {
-  background: var(--r2); border-left-color: var(--r); color: var(--r);
+  background: var(--r2); color: var(--r);
 }
 
 .sx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 7px; margin-bottom: 6px; }

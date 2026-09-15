@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="section-container">
     <div class="sec-header">
       <div class="sec-icon">📋</div>
@@ -32,9 +32,9 @@
       </div>
     </div>
 
-    <!-- Prefix & Fullname -->
-    <div class="field-row">
-      <div class="field-block" style="margin-bottom: 0">
+    <!-- Prefix, Fullname & Age -->
+    <div class="name-age-row">
+      <div class="field-block field-prefix">
         <div class="field-label">คำนำหน้า</div>
         <select class="field-input" v-model="form.prefix" @change="onPrefixChange">
           <option value="นาย">นาย</option>
@@ -42,28 +42,13 @@
           <option value="นางสาว">นางสาว</option>
         </select>
       </div>
-      <div class="field-block" style="grid-column: span 2; margin-bottom: 0">
+      <div class="field-block field-name">
         <div class="field-label">ชื่อ – นามสกุล <span class="req">จำเป็น</span></div>
         <input class="field-input" v-model="form.fullname" placeholder="กรอกชื่อ นามสกุล">
       </div>
-    </div>
-
-    <!-- Gender & Age -->
-    <div class="field-row" style="margin-top: 14px">
-      <div class="field-block" style="margin-bottom: 0">
-        <div class="field-label">เพศ</div>
-        <div class="pill-group">
-          <label class="pill" :class="{ sel: form.gender === 'ชาย' }">
-            <input type="radio" value="ชาย" v-model="form.gender"> ชาย
-          </label>
-          <label class="pill" :class="{ sel: form.gender === 'หญิง' }">
-            <input type="radio" value="หญิง" v-model="form.gender"> หญิง
-          </label>
-        </div>
-      </div>
-      <div class="field-block" style="margin-bottom: 0">
+      <div class="field-block field-age">
         <div class="field-label">อายุ (ปี)</div>
-        <input class="field-input" type="number" min="1" max="100" v-model="form.age" placeholder="ระบุอายุ">
+        <input class="field-input" type="number" min="1" max="120" v-model="form.age" placeholder="ระบุอายุ">
       </div>
     </div>
 
@@ -186,6 +171,10 @@ const onPrefixChange = () => {
   else if (props.form.prefix === 'นาง' || props.form.prefix === 'นางสาว') props.form.gender = 'หญิง'
 }
 
+if (!props.form.gender && props.form.prefix) {
+  onPrefixChange()
+}
+
 const onNext = () => {
   if (!idRaw.value || idRaw.value.length < 13 || !props.form.fullname || !props.form.hospital) {
     errorMsg.value = 'กรุณากรอกเลขบัตรประชาชน, ชื่อ-นามสกุล และสถานบริการสุขภาพให้ครบถ้วน'
@@ -210,4 +199,11 @@ const hospitals = ['รพ.สต.หลักสาม', 'รพ.สต.ทุ�
 .sec-icon { width: 40px; height: 40px; background: var(--g3); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
 .sec-title { font-size: 16px; font-weight: 700; color: var(--g2); }
 .sec-sub { font-size: 13px; color: var(--muted); }
+
+.name-age-row { display: grid; grid-template-columns: 120px 1fr 110px; gap: 10px; margin-top: 14px; }
+.name-age-row .field-block { margin-bottom: 0; }
+@media(max-width: 580px) {
+  .name-age-row { grid-template-columns: 110px 1fr; }
+  .name-age-row .field-age { grid-column: span 2; }
+}
 </style>

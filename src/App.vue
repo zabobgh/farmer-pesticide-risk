@@ -8,6 +8,7 @@
 
     <DraftBanner
       :show="hasDraft && !isSubmitted"
+      :draft-info="draftInfo"
       @restore="onRestoreDraft"
       @clear="clearDraft"
     />
@@ -97,7 +98,7 @@ import { useSync } from './composables/useSync.js'
 import { validateThaiCitizenId } from './composables/useThaiId.js'
 import { qAdata, qBdata, calculateRisk } from './composables/useRiskMatrix.js'
 
-const { form, hasDraft, loadDraft, clearDraft } = useFormData()
+const { form, hasDraft, draftInfo, loadDraft, clearDraft } = useFormData()
 const { isOnline, sendPayload } = useSync()
 
 const currentStep = ref(0)
@@ -182,7 +183,7 @@ const buildPayload = () => {
 
   const qAns = {}
   for (let i = 9; i <= 23; i++) {
-    qAns[q] = form.answers[i] || ''
+    qAns['q' + i] = form.answers[i] !== undefined ? form.answers[i] : '-'
   }
 
   return {

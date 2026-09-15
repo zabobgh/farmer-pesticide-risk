@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="success-screen">
     <div class="success-icon">✅</div>
     <div class="success-title">บันทึกข้อมูลสำเร็จ</div>
@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="btn-group">
-      <button class="btn-new" @click="('reset')">+ บันทึกรายถัดไป</button>
+      <button class="btn-new" @click="$emit('reset')">+ บันทึกรายถัดไป</button>
       <button class="btn-review" @click="printForm">🖨️ พิมพ์ใบสรุป</button>
     </div>
   </div>

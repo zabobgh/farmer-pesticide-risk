@@ -99,8 +99,8 @@
     </div>
 
     <div class="nav-row">
-      <button class="btn-back" @click="('back')">← ย้อนกลับ</button>
-      <button class="btn-submit" @click="('submit')">✅ บันทึกและส่งข้อมูล</button>
+      <button class="btn-back" @click="$emit('back')">← ย้อนกลับ</button>
+      <button class="btn-submit" @click="$emit('submit')">✅ บันทึกและส่งข้อมูล</button>
     </div>
   </div>
 </template>

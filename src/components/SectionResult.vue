@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="section-container">
     <div class="sec-header">
       <div class="sec-icon">📊</div>
@@ -36,29 +36,33 @@
 
     <!-- Edit Buttons -->
     <div class="edit-nav">
-      <button @click="('go-step', 0)">✏️ แก้ไขข้อมูลทั่วไป</button>
-      <button @click="('go-step', 1)">✏️ แก้ไขการใช้สารเคมี</button>
-      <button @click="('go-step', 2)">✏️ แก้ไขอาการ</button>
+      <button @click="$emit('go-step', 0)">✏️ แก้ไขข้อมูลทั่วไป</button>
+      <button @click="$emit('go-step', 1)">✏️ แก้ไขการใช้สารเคมี</button>
+      <button @click="$emit('go-step', 2)">✏️ แก้ไขอาการ</button>
     </div>
 
-    <div class="nav-row" style="flex-direction: column; gap: 10px">
-      <div style="display: flex; gap: 10px; width: 100%">
-        <button class="btn-back" @click="('go-step', 2)">← ย้อนกลับ</button>
-        <button
-          class="btn-next"
-          :style="{ background: riskResult.meta.blood ? 'var(--r)' : '#426156' }"
-          @click="('go-step', 4)"
-        >
-          {{ riskResult.meta.blood ? '🩸 แนะนำตรวจเลือด: ไปยังส่วนที่ 5 →' : 'ส่วนที่ 5 — เจาะเลือด (ถ้ามีประวัติใช้ยากำจัดแมลง) →' }}
+    <div class="action-stack">
+      <!-- Case: Blood test recommended -->
+      <template v-if="riskResult.meta.blood">
+        <button class="btn-action-primary danger-btn" @click="$emit('go-step', 4)">
+          🩸 แนะนำตรวจเลือด: ดำเนินการต่อในส่วนที่ 5 →
         </button>
-      </div>
-      <button
-        class="btn-submit"
-        :style="{ background: riskResult.meta.blood ? '#426156' : '#0a5742' }"
-        @click="('submit')"
-      >
-        {{ riskResult.meta.blood ? 'บันทึกข้อมูลโดยไม่ตรวจเลือด' : '✅ บันทึกและส่งข้อมูล (ความเสี่ยงต่ำ-ปานกลาง ไม่จำเป็นต้องตรวจเลือด)' }}
-      </button>
+        <button class="btn-action-secondary" @click="$emit('submit')">
+          บันทึกและส่งข้อมูล (กรณีไม่ประสงค์ตรวจเลือด)
+        </button>
+      </template>
+
+      <!-- Case: Normal/Low risk -->
+      <template v-else>
+        <button class="btn-action-primary success-btn" @click="$emit('submit')">
+          ✅ บันทึกและส่งข้อมูล (ไม่จำเป็นต้องตรวจเลือด)
+        </button>
+        <button class="btn-action-subtle" @click="$emit('go-step', 4)">
+          ไปยังส่วนที่ 5 — บันทึกการตรวจเลือดเพิ่มเติม (ถ้ามีประวัติใช้ยากำจัดแมลง) →
+        </button>
+      </template>
+
+      <button class="btn-back-link" @click="$emit('go-step', 2)">← ย้อนกลับไปแก้ไขอาการ</button>
     </div>
   </div>
 </template>
@@ -116,5 +120,40 @@ const riskResult = computed(() => calculateRisk(totalScore.value, symptomGroup.v
 
 .matrix-note { font-size: 12px; color: var(--muted); margin-top: 10px; padding: 8px 12px; background: #f7f7f5; border-radius: var(--radius-sm); line-height: 1.6; }
 .edit-nav { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-.edit-nav button { flex: 1; padding: 9px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--muted); cursor: pointer; font-size: 13px; font-family: 'Sarabun', sans-serif; }
+.edit-nav button { flex: 1; padding: 9px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--muted); cursor: pointer; font-size: 13px; font-family: 'Sarabun', sans-serif; transition: background .15s; }
+.edit-nav button:hover { background: #f0fdf9; }
+
+.action-stack { display: flex; flex-direction: column; gap: 10px; margin-top: 1.5rem; }
+.btn-action-primary {
+  width: 100%; min-height: 48px; padding: 12px 20px; border: none; border-radius: var(--radius-sm);
+  color: #fff; font-size: 15px; font-weight: 700; font-family: 'Sarabun', sans-serif;
+  cursor: pointer; transition: opacity .15s, transform .15s;
+}
+.btn-action-primary:active { transform: scale(.99); }
+.danger-btn { background: var(--r); }
+.danger-btn:hover { background: #991b1b; }
+.success-btn { background: var(--g2); }
+.success-btn:hover { background: #063e2c; }
+
+.btn-action-secondary {
+  width: 100%; min-height: 44px; padding: 10px 16px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); background: #fff; color: var(--muted);
+  font-size: 14px; font-weight: 600; font-family: 'Sarabun', sans-serif; cursor: pointer;
+  transition: all .15s;
+}
+.btn-action-secondary:hover { background: #f7faf8; color: var(--txt); }
+
+.btn-action-subtle {
+  width: 100%; padding: 10px 14px; border: 1px dashed var(--border);
+  border-radius: var(--radius-sm); background: #fafdfb; color: var(--muted);
+  font-size: 13px; font-family: 'Sarabun', sans-serif; cursor: pointer;
+}
+.btn-action-subtle:hover { background: #f0fdf9; border-color: var(--g4); }
+
+.btn-back-link {
+  background: none; border: none; color: var(--muted); font-size: 13.5px;
+  font-family: 'Sarabun', sans-serif; font-weight: 600; cursor: pointer;
+  padding: 8px; margin-top: 4px; text-decoration: underline; text-underline-offset: 3px;
+}
+.btn-back-link:hover { color: var(--txt); }
 </style>

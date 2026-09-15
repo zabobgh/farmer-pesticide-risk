@@ -65,7 +65,7 @@
     <div v-if="errorMsg" class="warn">{{ errorMsg }}</div>
 
     <div class="nav-row">
-      <button class="btn-back" @click="('back')">← ย้อนกลับ</button>
+      <button class="btn-back" @click="$emit('back')">← ย้อนกลับ</button>
       <button class="btn-next" @click="onNext">ถัดไป — ส่วนที่ 3 →</button>
     </div>
   </div>

@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="step-nav">
     <button
       v-for="(step, idx) in steps"
@@ -8,7 +8,7 @@
         active: currentStep === idx,
         done: currentStep > idx
       }"
-      @click="('change-step', idx)"
+      @click="$emit('change-step', idx)"
     >
       <span class="sn-num">{{ step.num }}</span>
       {{ step.label }}

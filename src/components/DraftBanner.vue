@@ -1,15 +1,21 @@
-﻿<template>
+<template>
   <div v-if="show" class="draft-banner">
-    <span>📝 มีข้อมูลที่บันทึกค้างไว้ — ต้องการกรอกต่อหรือไม่?</span>
-    <div style="display: flex; gap: 6px">
-      <button class="btn-restore" @click="('restore')">กรอกต่อ</button>
-      <button class="btn-clear" @click="('clear')">เริ่มใหม่</button>
+    <div class="draft-text">
+      <span>📝 <strong>มีข้อมูลฉบับร่างค้างไว้</strong></span>
+      <span v-if="draftInfo?.fullname" class="draft-sub"> — ของคุณ {{ draftInfo.fullname }} {{ draftInfo.time ? `(บันทึกเมื่อ ${draftInfo.time} น.)` : '' }}</span>
+    </div>
+    <div style="display: flex; gap: 6px; flex-shrink: 0">
+      <button class="btn-restore" @click="$emit('restore')">กู้คืนข้อมูล</button>
+      <button class="btn-clear" @click="$emit('clear')">เริ่มใหม่</button>
     </div>
   </div>
 </template>
 
 <script setup>
-defineProps({ show: Boolean })
+defineProps({
+  show: Boolean,
+  draftInfo: Object
+})
 defineEmits(['restore', 'clear'])
 </script>
 
